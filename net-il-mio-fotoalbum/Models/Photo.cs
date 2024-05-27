@@ -14,6 +14,7 @@ namespace net_il_mio_fotoalbum.Models
 
         [StringLength(500, ErrorMessage = "Il nome della pizza può avere un massimo di 500 caratteri.")]
         [Required(ErrorMessage = "La descrizione della pizza è obbligatoria.")]
+        [MinLength(10)]
         public string Description { get; set; }
         public byte[]? ImgFile { get; set; }
         public string ImgSrc => ImgFile != null ? $"data:image/png;base64,{Convert.ToBase64String(ImgFile)}" : "";
