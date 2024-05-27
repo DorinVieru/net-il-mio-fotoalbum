@@ -55,5 +55,40 @@ namespace net_il_mio_fotoalbum.Controllers
 
             return RedirectToAction("Index");
         }
+
+        // MODIFICA GET 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Update(int id)
+        {
+            var pizzaModificata = PhotoManager.GetPhotoById(id);
+            if (pizzaModificata == null)
+                return NotFound();
+
+            PhotoFormModel model = new PhotoFormModel(pizzaModificata);
+            model.CreateCategories();
+
+            return View(model);
+        }
+
+        // MODIFICA POST al click del punsante MODIFICA
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(int id, PhotoFormModel photoUpdate)
+        {
+            if (!ModelState.IsValid)
+            {
+                photoUpdate.CreateCategories();
+                return View("Update", photoUpdate); // Ritorna alla view in cui è presente il form di modifica
+            }
+
+            photoUpdate.SetImageFileFromFormFile();
+            if (PhotoManager.UpdatePhoto(id, photoUpdate.Photo, photoUpdate.SelectedCategories))
+                return RedirectToAction("Index");
+            else
+                return NotFound();
+        }
+
+       
     }
 }
