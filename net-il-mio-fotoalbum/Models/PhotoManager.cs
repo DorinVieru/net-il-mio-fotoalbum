@@ -1,4 +1,9 @@
-﻿namespace net_il_mio_fotoalbum.Models
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using System;
+using System.Linq;
+
+namespace net_il_mio_fotoalbum.Models
 {
     public class PhotoManager
     {
@@ -22,6 +27,33 @@
             db.Photos.Add(Photo);
             db.SaveChanges();
 
+        }
+
+        // RECUPERARE UNA FOTO TRAMITE IL SUO ID
+        public static Photo GetPhotoById(int id, bool includeReferences = true)
+        {
+            try
+            {
+                using PhotoContext db = new PhotoContext();
+
+                if (includeReferences)
+                    return db.Photos.Where(p => p.Id == id).Include(p => p.Categories).FirstOrDefault();
+                return db.Photos.FirstOrDefault(p => p.Id == id);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Errore: foto non trovata. -> {ex.Message}");
+                return null;
+            }
+        }
+
+        // OTTENERE LA LISTA DI TUTTE LE FOTO
+        public static List<Photo> GetAllPhotos()
+        {
+            using PhotoContext db = new PhotoContext();
+
+            return db.Photos.ToList();
         }
 
         // PRENDERE TUTTE LE CATEGORIE DELLE FOTO
