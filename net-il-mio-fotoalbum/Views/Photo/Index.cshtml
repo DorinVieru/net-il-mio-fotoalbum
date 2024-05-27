@@ -1,5 +1,167 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using net_il_mio_fotoalbum.Models
+@using net_il_mio_fotoalbum.Code
+@model List<Photo>
+
 @{
+    ViewData["Title"] = "Lista Foto";
+
+    var defaultImagePath = Url.Content("~/img/no-image.jpg");
 }
+
+<div class="col-12 my-5 text-md-end text-center">
+    @if (User.IsInRole("Admin"))
+    {
+        <a href="@Url.Action("Create", "Photo")" class="btn btn-primary fs-5">Crea una nuova foto</a>
+    }
+</div>
+
+<div class="col-12">
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="btn-group" role="group" aria-label="View Switcher">
+            <input type="radio" class="btn-check" name="viewSwitcher" id="cardViewRadio" autocomplete="off" checked>
+            <label class="btn btn-outline-warning" for="cardViewRadio">
+                <i class="fa-solid fa-box"></i> Card
+            </label>
+
+            <input type="radio" class="btn-check" name="viewSwitcher" id="tableViewRadio" autocomplete="off">
+            <label class="btn btn-outline-warning" for="tableViewRadio">
+                <i class="fa-solid fa-table"></i> Tabella
+            </label>
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        // CARD
+        <div id="cardView" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 mt-3 mb-5">
+            @foreach (var photo in Model)
+            {
+                <div class="col mb-3 d-flex justify-content-center">
+                    <div class="card my-list-card h-100 mb-3" style="width: 22rem;">
+                        <div class="position-relative">
+                            <img src="@(string.IsNullOrEmpty(photo.ImgSrc) ? defaultImagePath : photo.ImgSrc)" class="img-fluid rounded-start" alt="@photo.Title">
+                            <span class="fs-6 badge position-absolute top-0 end-0 m-2" style="background-color: #FF9D2E" ;>@photo.Visible</span>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@photo.Title</h5>
+                            <p class="card-text">@photo.Description</p>
+                            @*VISUALIZZAZIONE DETTAGLI*@
+                            <a href="@Url.Action("Details", "Photo", new { id = photo.Id })" class="btn btn-primary mt-auto"><i class="fa-solid fa-eye"></i> Visualizza dettagli</a>
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                @*MODIFICA*@
+                                <a href="@Url.Action("Update", "Photo", new { id = photo.Id })" class="btn btn-warning my-2"><i class="fa-solid fa-pen-to-square"></i> Modifica</a>
+                                @*CANCELLAZIONE*@
+                                <a href="javascript:void(0);" class="btn btn-danger px-5" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-form-id="@photo.Id" data-pizza-name="@photo.Title" onclick="setFormId('@photo.Id', '@photo.Title')">
+                                    <i class="fa-solid fa-trash"></i> Cancella
+                                </a>
+                                <form id="deletePhotoForm-@photo.Id" asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post" class="d-none">
+                                    @Html.AntiForgeryToken()
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        // TABELLA
+        <div id="tableView" class="d-none mt-3 mb-5">
+            <table class="table table-striped">
+                <thead>
+                    <tr class="table-dark">
+                        <th>Nome</th>
+                        <th class="d-none d-lg-table-cell">Img</th>
+                        <th class="d-none d-md-table-cell">Descrizione</th>
+                        <th>Visibilità</th>
+                        <th>Strumenti</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var photo in Model)
+                    {
+                        <tr>
+                            <td>@photo.Title</td>
+                            <td class="d-none d-lg-table-cell"> <img src="@(string.IsNullOrEmpty(photo.ImgSrc) ? defaultImagePath : photo.ImgSrc)" class="img-fluid rounded-3" alt="@photo.Title" style="width: 100px;"> </td>
+                            <td class="d-none d-md-table-cell">@($"{photo.Description.SafeSubstring(20)}")</td>
+                            <td>€ @photo.Visible</td>
+                            <td>
+                                <a href="@Url.Action("Details", "Photo", new { id = photo.Id })" class="btn btn-primary"><i class="fa-solid fa-eye"></i></a>
+                                <a href="@Url.Action("Update", "Photo", new { id = photo.Id })" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
+                                <form id="deletePhotoForm-@photo.Id" data-form-id="@photo.Id" asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setFormId('@photo.Id', '@photo.Title')">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="text-danger fs-4 fw-bold py-5">Nessuna foto presente al momento.</p>
+    }
+</div>
+
+<!-- MODALE -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Conferma Cancellazione</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Sei sicuro di voler cancellare la foto <span id="photoName"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JAVASCRIPT PER LA MODALE E SWITCH -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let formIdToDelete = null;
+
+        function setFormId(formId, photoName) {
+            formIdToDelete = formId;
+            document.getElementById('photoName').textContent = photoName;
+        }
+
+        // setFormId disponibile globalmente
+        window.setFormId = setFormId;
+
+        document.getElementById('confirmDeleteButton').addEventListener('click', function () {
+            if (formIdToDelete) {
+                document.getElementById('deletePhotoForm-' + formIdToDelete).submit();
+            }
+        });
+
+        document.getElementById('cardViewRadio').addEventListener('change', function () {
+            var cardView = document.getElementById('cardView');
+            var tableView = document.getElementById('tableView');
+            if (this.checked) {
+                cardView.classList.remove('d-none');
+                tableView.classList.add('d-none');
+            }
+        });
+
+        document.getElementById('tableViewRadio').addEventListener('change', function () {
+            var cardView = document.getElementById('cardView');
+            var tableView = document.getElementById('tableView');
+            if (this.checked) {
+                cardView.classList.add('d-none');
+                tableView.classList.remove('d-none');
+            }
+        });
+    });
+</script>
