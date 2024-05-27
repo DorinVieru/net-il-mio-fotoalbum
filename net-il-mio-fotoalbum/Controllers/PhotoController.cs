@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace net_il_mio_fotoalbum.Controllers
 {
+    [Authorize]
     public class PhotoController : Controller
     {
         public IActionResult Index()
@@ -89,6 +90,13 @@ namespace net_il_mio_fotoalbum.Controllers
                 return NotFound();
         }
 
-       
+        // CNACELLAZIONE POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id)
+        {
+            PhotoManager.DeletePhoto(id);
+            return RedirectToAction("Index");
+        }
     }
 }
