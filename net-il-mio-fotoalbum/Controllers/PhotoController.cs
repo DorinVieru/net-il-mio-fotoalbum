@@ -25,5 +25,35 @@ namespace net_il_mio_fotoalbum.Controllers
             }
             return View(photo);
         }
+
+        // CREAZIONE GET
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create()
+        {
+            Photo p = new Photo();
+
+            PhotoFormModel model = new PhotoFormModel(p);
+            model.CreateCategories();
+
+            return View(model);
+        }
+
+        // CREAZIONE POST al click del pulsante CREATE
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(PhotoFormModel photoInsert)
+        {
+            if (!ModelState.IsValid)
+            {
+                photoInsert.CreateCategories();
+                return View("Create", photoInsert); // Ritorna alla view in cui è presente il form
+            }
+
+            photoInsert.SetImageFileFromFormFile();
+            PhotoManager.InsertPhoto(photoInsert.Photo, photoInsert.SelectedCategories);
+
+            return RedirectToAction("Index");
+        }
     }
 }
