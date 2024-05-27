@@ -69,7 +69,7 @@
                             @*VISUALIZZAZIONE DETTAGLI*@
                             <a href="@Url.Action("Details", "Photo", new { id = photo.Id })" class="btn btn-primary mt-auto"><i class="fa-solid fa-eye"></i> Visualizza dettagli</a>
 
-                            @if (User.IsInRole("Admin"))
+                            @if (User.IsInRole("SuperAdmin"))
                             {
                                 @*MODIFICA*@
                                 <a href="@Url.Action("Update", "Photo", new { id = photo.Id })" class="btn btn-warning my-2"><i class="fa-solid fa-pen-to-square"></i> Modifica</a>
