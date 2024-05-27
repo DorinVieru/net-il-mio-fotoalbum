@@ -1,5 +1,102 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using net_il_mio_fotoalbum.Models
+@model PhotoFormModel
+
 @{
+    ViewData["Title"] = "Crea la tua foto";
+
+    var defaultImagePath = Url.Content("~/img/no-image.jpg");
+    var imagePath = string.IsNullOrEmpty(Model.Photo.ImgSrc) ? defaultImagePath : Model.Photo.ImgSrc;
 }
+
+@if (User.IsInRole("SuperAdmin"))
+{
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-12 text-center">
+                <h2>Crea la <span class="text-warning fw-bold">tua foto</span> personalizzata</h2>
+            </div>
+            <div class="col-12 col-sm-11 col-lg-8">
+                <form asp-controller="Photo" asp-action="Create" method="post" class="my-4 personal-bg rounded-3 p-4 text-black" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nome</label>
+                        <input type="text" asp-for="Photo.Title" class="form-control" id="name" />
+                        <span asp-validation-for="Photo.Title" class="text-danger fw-bold"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descrizione della pizza</label>
+                        <textarea asp-for="Photo.Description" class="form-control" id="description" rows="4"></textarea>
+                        <span asp-validation-for="Photo.Description" class="text-danger fw-bold"></span>
+                    </div>
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-12 col-md-6 mb-3 mb-lg-0">
+                            <label asp-for="ImageFormFile" class="form-label">Immagine</label>
+
+                            <input type="file" asp-for="ImageFormFile" name="ImageFormFile" class="form-control" id="ImageFormFile" />
+                            <span asp-validation-for="Photo.ImgFile" class="text-danger fw-bold"></span>
+                        </div>
+                        <div class="col-12 col-md-6 text-start text-md-end">
+                            <img src="@imagePath" class="w-50 mb-1 rounded-3" id="previewImage">
+                        </div>
+                    </div>
+                    <div class="mb-3 d-flex align-items-center">
+                        <label for="price" class="form-label">Visibile</label>
+                        <div class="btn-group ms-3" role="group" aria-label="Basic radio toggle button group">
+                            <input type="radio" asp-for="Photo.Visible" class="btn-check" id="btnradio1" value="true" autocomplete="off" checked>
+                            <label class="btn btn-outline-primary" for="btnradio1">Si</label>
+                            <input type="radio" asp-for="Photo.Visible" class="btn-check" id="btnradio2" value="false" autocomplete="off">
+                            <label class="btn btn-outline-primary" for="btnradio2">No</label>
+                            <span asp-validation-for="Photo.Visible" class="text-danger fw-bold"></span>
+                        </div>
+                    </div>
+                    <div class="mb-5">
+                        <label for="category" class="form-label">Seleziona la/e categoria/e:</label>
+                        <div class="btn-group d-flex flex-wrap" role="group" aria-label="Basic checkbox toggle button group">
+                            @for (int i = 0; i < Model.Categories.Count; i++)
+                            {
+                                string categoryId = "category" + i;
+                                <input type="checkbox" class="btn-check" id="@categoryId" name="SelectedIngredients" value="@Model.Categories[i].Value"
+                                       @(Model.SelectedCategories.Contains(Model.Categories[i].Value) ? "checked" : "") autocomplete="off" />
+                                <label class="btn btn-outline-dark m-1" for="@categoryId">@Model.Categories[i].Text</label>
+                            }
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <input type="submit" class="btn btn-warning fs-5 px-5 btn-crea-modifica" value="Crea Foto">
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 my-5 text-center">
+                <a href="@Url.Action("Index", "Photo")" class="btn btn-secondary">Torna all'elenco di tutte le pizze</a>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-secondary mt-2 mt-md-0">Ricomincia dalla Home</a>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 mt-5 text-danger fw-bold">Non sei autorizzato ad accedere a questo contenuto.</h1>
+            </div>
+            <div class="col-12 my-5 text-center">
+                <a href="@Url.Action("Index", "Photo")" class="btn btn-primary">Torna all'elenco di tutte le pizze</a>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-2 mt-md-0">Ricomincia dalla Home</a>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    document.getElementById('ImageFormFile').addEventListener('change', function(event) {
+        var file = event.target.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('previewImage').src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>

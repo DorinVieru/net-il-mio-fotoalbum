@@ -29,7 +29,7 @@ namespace net_il_mio_fotoalbum.Controllers
 
         // CREAZIONE GET
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SuperAdmin")]
         public IActionResult Create()
         {
             Photo p = new Photo();
@@ -59,7 +59,7 @@ namespace net_il_mio_fotoalbum.Controllers
 
         // MODIFICA GET 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SuperAdmin")]
         public IActionResult Update(int id)
         {
             var pizzaModificata = PhotoManager.GetPhotoById(id);

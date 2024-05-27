@@ -66,6 +66,18 @@ li {
     bottom: -4px;
 }
 
+/* MAIN */
+.personal-bg {
+    background-color: #E9ECEA;
+}
+
+/* BUTTON FORM FOR MOBILE */
+@media (max-width: 768px) {
+    .btn-crea-modifica {
+        width: 100%;
+    }
+}
+
 /* FOOTER */
 footer {
     margin-top: auto;
