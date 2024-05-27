@@ -1,5 +1,29 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<div class="container pt-4 pb-2">
+    <div class="row">
+        <div class="col-12 col-md-6 mb-3 mb-md-0 text-center">
+            <h4>NAVIGAZIONE</h4>
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                    <a class="nav-link nav-footer text-white text-decoration-none" asp-area="" asp-controller="Home" asp-action="Index">Homepage</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-footer text-white text-decoration-none" asp-area="" asp-controller="Photo" asp-action="Index">Foto</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-12 col-md-6 mb-3 mb-md-0 text-center">
+            <h4>GDPR</h4>
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                    <a class="nav-link nav-footer text-white" asp-area="" asp-controller="" asp-action="">Cookie Policy</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-footer text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-12 pt-2 pt-md-5 d-flex justify-content-center text-center">
+            <p class="copy">&copy; 2024 - InstantPhoto s.p.a - Scopri la tua Essenza in uno scatto by Dorin Vieru</p>
+        </div>
+    </div>
+</div>
