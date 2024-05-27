@@ -54,7 +54,7 @@
                             <span class="position-absolute top-0 end-0 m-2">
                                 @if (photo.Visible)
                                 {
-                                    <i class="fa-solid fa-circle text-success"></i>
+                                    <i class="fa-solid fa-circle text-success"></i> <span class="badge bg-success text-white fw-bold">Pubblico</span>
                                 }
                                 else
                                 {
@@ -66,6 +66,23 @@
                             <div class="filter-text d-none">@photo.Title</div>
                             <h5 class="card-title">@photo.Title</h5>
                             <p class="card-text">@photo.Description</p>
+                            <p class="card-text mb-0">
+                                Categoria assegnata:
+                                @if (photo.Categories?.Count > 0)
+                                {
+                                    <div class="d-flex flex-wrap">
+                                        @foreach (var cat in photo.Categories)
+                                        {
+                                            <div class="categories m-1 p-1 text-white"> @cat.Name </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="fw-bold">Nessuna categoria assegnata alla foto.</span>
+                                }
+
+                            </p>
                             @*VISUALIZZAZIONE DETTAGLI*@
                             <a href="@Url.Action("Details", "Photo", new { id = photo.Id })" class="btn btn-primary mt-auto"><i class="fa-solid fa-eye"></i> Visualizza dettagli</a>
 
@@ -106,20 +123,20 @@
                 <tbody>
                     @foreach (var photo in Model)
                     {
-                        <tr class="myPhoto">
+                        <tr class="myPhoto my-list-card">
 
                             <td class="filter-text d-none">@photo.Title</td>
                             <td>@($"{photo.Title.SafeSubstring(20)}")</td>
                             <td class="d-none d-lg-table-cell"> <img src="@(string.IsNullOrEmpty(photo.ImgSrc) ? defaultImagePath : photo.ImgSrc)" class="img-fluid rounded-3" alt="@photo.Title" style="width: 100px;"> </td>
                             <td class="d-none d-md-table-cell">@($"{photo.Description.SafeSubstring(20)}")</td>
-                            <td>
+                            <td class="text-center text-md-start">
                                 @if (photo.Visible)
                                 {
-                                    <i class="fa-solid fa-circle text-success"></i>
+                                    <i class="fa-solid fa-circle text-success"></i> <span class="badge bg-success text-white fw-bold d-none d-md-inline-block">Pubblico</span>
                                 }
                                 else
                                 {
-                                    <i class="fa-solid fa-circle text-danger"></i> <span class="badge bg-danger text-white fw-bold">Bozza</span>
+                                    <i class="fa-solid fa-circle text-danger"></i> <span class="badge bg-danger text-white fw-bold d-none d-md-inline-block">Bozza</span>
                                 }
                             </td>
                             <td>

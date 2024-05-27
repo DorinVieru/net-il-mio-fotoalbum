@@ -67,6 +67,29 @@ li {
 }
 
 /* MAIN */
+.my-title{
+   color: #3A008A;
+}
+
+.my-list-card {
+    transition: box-shadow 0.5s, transform 0.5s;
+}
+
+.my-list-card:hover {
+    box-shadow: 0px 0px 10px 0px #3A008A;
+    transform: scale(1.03); 
+}
+
+.row-detail-card {
+    --bs-gutter-x: 0;
+}
+
+.categories {
+    background-color: #3A008A;
+    border: solid #3A008A;
+    border-radius: 5px;
+}
+
 .personal-bg {
     background-color: #E9ECEA;
 }

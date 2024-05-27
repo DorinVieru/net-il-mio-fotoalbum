@@ -53,7 +53,8 @@ namespace net_il_mio_fotoalbum.Models
         {
             using PhotoContext db = new PhotoContext();
 
-            return db.Photos.ToList();
+            return db.Photos.Include(p => p.Categories)
+                          .ThenInclude(pc => pc.photos).ToList();
         }
 
         // MODIFICARE UNA FOTO

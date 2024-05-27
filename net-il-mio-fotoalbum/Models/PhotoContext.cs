@@ -17,5 +17,20 @@ namespace net_il_mio_fotoalbum.Models
         {
             optionsBuilder.UseSqlServer(SqlServer);
         }
+
+      //protected override void OnModelCreating(ModelBuilder modelBuilder)
+      //  {
+      //      base.OnModelCreating(modelBuilder);
+
+      //      modelBuilder.Entity<Photo>()
+      //          .HasMany(p => p.Categories)
+      //          .WithMany(c => c.Photos)
+      //          .UsingEntity(j => j.ToTable("PhotoCategory"));
+
+      //      modelBuilder.Entity<Category>()
+      //          .HasMany(c => c.Photos)
+      //          .WithMany(p => p.Categories)
+      //          .UsingEntity(j => j.ToTable("PhotoCategory"));
+      //  }
     }
 }
