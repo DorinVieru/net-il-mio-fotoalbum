@@ -1,0 +1,89 @@
+﻿@using net_il_mio_fotoalbum.Models
+@using net_il_mio_fotoalbum.Code
+@model ContactMessage
+
+@{
+    ViewData["Title"] = "Dettagli Messaggio";
+}
+
+<div class="container">
+    <h1 class="display-4 text-center fw-bold my-title">Messaggio di @Model.Name</h1>
+    <div class="row">
+        <div class="col-12">
+            <div class="card detail-card my-3">
+                <div class="row g-0">
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <p class="card-text fs-6">Email: @Model.Email</p>
+                            <p class="card-text fs-5"> Contenuto del messaggio: @Model.Message</p>
+                            @if (User.IsInRole("SuperAdmin"))
+                            {
+                                @*CANCELLAZIONE*@
+                                <a href="javascript:void(0);" class="btn btn-danger px-5" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-form-id="@Model.Id" data-pizza-name="@Model.Name" onclick="setFormId('@Model.Id', '@Model.Name')">
+                                    <i class="fa-solid fa-trash"></i> Cancella
+                                </a>
+                                <form id="deletePhotoForm-@Model.Id" asp-controller="Message" asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-none">
+                                    @Html.AntiForgeryToken()
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (User.IsInRole("SuperAdmin") || User.IsInRole("User"))
+        {
+            <div class="col-12 mb-5 text-center">
+                <a href="@Url.Action("Index", "Message")" class="btn btn-primary">Torna all'elenco di tutti i messaggi</a>
+            </div>
+        }
+        else
+        {
+            <div class="col-12 mb-5 text-center">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Torna alla home</a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- MODALE -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Conferma Cancellazione</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Sei sicuro di voler cancellare la foto <span id="photoName"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JAVASCRIPT PER LA MODALE -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let formIdToDelete = null;
+
+        function setFormId(formId, photoName) {
+            formIdToDelete = formId;
+            document.getElementById('photoName').textContent = photoName;
+        }
+
+        // setFormId disponibile globalmente
+        window.setFormId = setFormId;
+
+        document.getElementById('confirmDeleteButton').addEventListener('click', function () {
+            if (formIdToDelete) {
+                document.getElementById('deletePhotoForm-' + formIdToDelete).submit();
+            }
+        });
+    });
+</script>
+
+

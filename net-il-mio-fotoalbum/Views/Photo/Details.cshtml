@@ -2,7 +2,7 @@
 @model Photo
 
 @{
-    ViewData["Title"] = "Dettagli Pizza";
+    ViewData["Title"] = "Dettagli Foto";
 
     var defaultImagePath = Url.Content("~/img/no-image.jpg");
 }
@@ -63,7 +63,7 @@
                 </div>
             </div>
         </div>
-        @if (User.IsInRole("User"))
+        @if (User.IsInRole("SuperAdmin") || User.IsInRole("User"))
         {
             <div class="col-12 mb-5 text-center">
                 <a href="@Url.Action("Index", "Photo")" class="btn btn-primary">Torna all'elenco di tutte le foto</a>

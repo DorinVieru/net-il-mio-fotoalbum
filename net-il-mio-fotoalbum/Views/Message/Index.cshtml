@@ -1,27 +1,24 @@
 ﻿@using net_il_mio_fotoalbum.Models
 @using net_il_mio_fotoalbum.Code
-@model List<Category>
+@model List<ContactMessage>
 
 @{
-    ViewData["Title"] = "Lista Categorie";
+    ViewData["Title"] = "Lista Messaggi";
 }
 
-@if (User.IsInRole("SuperAdmin") || User.IsInRole("User"))
+@if (User.IsInRole("SuperAdmin"))
 {
-    <div class="col-12 my-5 text-center">
+    <div class="col-12 text-center">
         <div class="row pe-0">
+            <div class="text-center">
+                <h1 class="my-title mt-2 mb-5">Messaggi ricevuti</h1>
+            </div>
             <div class="col-12 col-md-6 text-md-start pb-3 pb-md-0">
                 <form class="d-flex justify-content-center justify-content-md-start" role="search">
                     <input class="form-control w-75" id="Filter" type="search" placeholder="Cerca per nome..." aria-label="Search">
                     <button class="btn btn-outline-warning ms-2 px-3" type="submit">Cerca</button>
                 </form>
             </div>
-            @if (User.IsInRole("SuperAdmin"))
-            {
-                <div class="col-12 col-md-6 text-md-end pe-0 me-0">
-                    <a href="@Url.Action("Create", "Category")" class="btn btn-primary fs-5">Crea una nuova Categoria</a>
-                </div>
-            }
         </div>
     </div>
 
@@ -40,22 +37,25 @@
                         <tr class="table-dark">
                             <th>ID</th>
                             <th>Nome</th>
+                            <th>Email</th>
+                            <th>Messaggio</th>
                             <th>Strumenti</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var category in Model)
+                        @foreach (var message in Model)
                         {
                             <tr class="myPhoto my-list-card">
-                                <td class="filter-text d-none">@category.Name</td>
-                                <td>@category.Id</td>
-                                <td>@($"{category.Name.SafeSubstring(20)}")</td>
+                                <td class="filter-text d-none">@message.Name</td>
+                                <td>@message.Id</td>
+                                <td>@message.Name</td>
+                                <td>@message.Email</td>
+                                <td>@($"{message.Message.SafeSubstring(20)}")</td>
                                 <td>
-                                    <a href="@Url.Action("Details", "Category", new { id = category.Id })" class="btn btn-primary"><i class="fa-solid fa-eye"></i></a>
-                                    <a href="@Url.Action("Update", "Category", new { id = category.Id })" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <form id="deletePhotoForm-@category.Id" data-form-id="@category.Id" asp-controller="Message" asp-action="Delete" asp-route-id="@category.Id" method="post" class="d-inline">
+                                    <a href="@Url.Action("Details", "Message", new { id = message.Id })" class="btn btn-primary"><i class="fa-solid fa-eye"></i></a>
+                                    <form id="deletePhotoForm-@message.Id" data-form-id="@message.Id" asp-controller="Message" asp-action="Delete" asp-route-id="@message.Id" method="post" class="d-inline">
                                         @Html.AntiForgeryToken()
-                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setFormId('@category.Id', '@category.Name')">
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setFormId('@message.Id', '@message.Name')">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </form>
@@ -95,7 +95,7 @@ else
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Sei sicuro di voler cancellare la categoria <span id="photoName"></span>?
+                Sei sicuro di voler cancellare il messaggio di <span id="photoName"></span>?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>

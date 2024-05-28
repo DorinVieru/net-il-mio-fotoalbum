@@ -8,7 +8,7 @@
     var defaultImagePath = Url.Content("~/img/no-image.jpg");
 }
 
-@if (User.IsInRole("SuperAdmin"))
+@if (User.IsInRole("SuperAdmin") || User.IsInRole("User"))
 {
     <div class="col-12 my-5 text-center">
         <div class="row pe-0">

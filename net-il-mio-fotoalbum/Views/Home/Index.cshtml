@@ -42,7 +42,7 @@
                 <div class="text-center d-flex flex-column align-items-center">
                     <h3 class="border-bottom border-primary w-75 mb-4 pb-2"><span class="my-title fw-bold"> <i class="fa-solid fa-square-envelope"></i> Contattami</span> per info</h3>
                 </div>
-                <div id="successMessage" class="alert alert-success mt-3 d-none">
+                <div id="successMessage" class="alert alert-success mt-3" style="display: none;">
                     Il tuo messaggio è stato inviato con successo!
                 </div>
                 <form class="pt-2" asp-controller="" id="contactForm">
@@ -99,11 +99,12 @@
                         console.log('Rendering photo:', photo);
 
                         let categoriesHtml = '';
-                        if (photo.Categories && photo.Categories.length > 0) {
+                        if (photo.categories && photo.categories.length > 0) {
                             categoriesHtml = '<div class="d-flex flex-wrap">';
-                            photo.Categories.forEach(cat => {
+                            photo.categories.forEach(cat => {
+                                console.log('forerach:', cat)
                                 categoriesHtml += `<div class="categories m-1 p-1 text-white">
-                                                        <a href="/Category/Details/${cat.Id}" class="text-white">${cat.Name}</a>
+                                                        <a href="/Category/Details/${cat.id}" class="text-white text-decoration-none">${cat.name}</a>
                                                    </div>`;
                             });
                             categoriesHtml += '</div>';
@@ -111,7 +112,7 @@
                             categoriesHtml = '<span class="fw-bold">Nessuna categoria assegnata alla foto.</span>';
                         }
 
-                        const photoHtml = `
+                        let photoHtml = `
                             <div class="col col-12 mb-3 d-flex justify-content-center">
                                 <div class="card my-list-card h-100 mb-3" style="width: 22rem;">
                                     <div class="position-relative">
@@ -167,7 +168,7 @@
                 .then(response => {
                     // Messaggio di successo
                     const successMessage = document.getElementById('successMessage');
-                    successMessage.classList.add('d-block');
+                    successMessage.style.display = 'block';
                     // Ricarica la pagina
                     setTimeout(() => {
                         location.reload();
