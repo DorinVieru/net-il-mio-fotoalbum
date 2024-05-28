@@ -4,7 +4,6 @@ using net_il_mio_fotoalbum.Models;
 
 namespace net_il_mio_fotoalbum.Controllers
 {
-    [Authorize]
     public class CategoryController : Controller
     {
         public IActionResult Index()

@@ -12,7 +12,7 @@ namespace net_il_mio_fotoalbum.Controllers
         public IActionResult GetAllPhotos(string? name)
         {
             if(name == null) {
-                return Ok(PhotoManager.GetAllPhotos());
+                return Ok(PhotoManager.GetAllVisiblePhotos());
             }
 
             return Ok(PhotoManager.GetAllPhotosFilter(name));

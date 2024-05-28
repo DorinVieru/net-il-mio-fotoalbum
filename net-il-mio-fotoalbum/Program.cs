@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using net_il_mio_fotoalbum.Models;
+using System.Text.Json.Serialization;
 namespace net_il_mio_fotoalbum
 {
     public class Program
@@ -17,6 +18,7 @@ namespace net_il_mio_fotoalbum
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             var app = builder.Build();
 

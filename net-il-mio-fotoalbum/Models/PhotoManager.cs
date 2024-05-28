@@ -58,14 +58,21 @@ namespace net_il_mio_fotoalbum.Models
         }
 
         // OTTENERE LA LISTA DI TUTTE LE FOTO CON FILTRO
-        public static List<Photo> GetAllPhotosFilter(string? search)
+        public static List<Photo> GetAllPhotosFilter(string? name)
         {
             using PhotoContext db = new PhotoContext();
 
-            if (search == null)
-                return db.Photos.ToList();
+            if (name == null)
+                return db.Photos.Include(p => p.Categories).ToList();
 
-            return db.Photos.Where(p => p.Title.ToLower().Contains(search.ToLower())).ToList();
+            return db.Photos.Where(p => p.Title.ToLower().Contains(name.ToLower())).Include(p => p.Categories).ToList();
+        }
+
+        // OTTENERE LA LISTA DI TUTTE LE FOTO VISIBILI
+        public static List<Photo> GetAllVisiblePhotos()
+        {
+            using PhotoContext db = new PhotoContext();
+            return db.Photos.Where(p => p.Visible).Include(p => p.Categories).ToList();
         }
 
         // MODIFICARE UNA FOTO

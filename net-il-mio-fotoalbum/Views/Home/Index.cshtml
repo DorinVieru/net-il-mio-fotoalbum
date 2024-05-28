@@ -2,7 +2,104 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="row">
+        <div class="col-12 mb-3 d-flex justify-content-center">
+            <h1>Lista delle Foto</h1>
+        </div>
+        <div class="row pe-0">
+            <div class="col-6 text-start">
+                <form class="d-flex" role="search">
+                    <input class="form-control w-50 js-search" type="search" placeholder="Cerca per nome..." aria-label="Search">
+                    <button class="btn btn-outline-success ms-2 px-3" type="submit">Cerca</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row js-no-photo d-none">
+        <div class="col-12 mb-3 d-flex justify-content-center">
+            <h4>Non hai inserito nessuna foto</h4>
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 mt-3 mb-5 js-photo-show d-none">
+        @*Elenco delle foto*@
+    </div>
 </div>
+
+@*SCRIPT AXIOS*@
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    // FUNZIONE PER CARICARE LA LISTA DELLE FOTO
+    function loadList(nameFilter) {
+        axios.get('api/PhotoWebApi/GetAllPhotos',
+            {
+                params:
+                {
+                    name: nameFilter
+                }
+            }).then((res) => {
+                console.log(res.data)
+                if (res.data.length == 0) // Non c'è nessuna foto
+                {
+                    document.querySelector('.js-no-photo').classList.remove('d-none');
+                    document.querySelector('.js-photo-show').classList.add('d-none');
+                }
+                else {
+                    document.querySelector('.js-no-photo').classList.add('d-none');
+                    var photoShow = document.querySelector('.js-photo-show');
+                    photoShow.classList.remove('d-none');
+
+                    photoShow.innerHTML = '';
+                    res.data.forEach((photo) => {
+                        console.log('Rendering photo:', photo);
+
+                        const categoriesHtml = photo.Categories && photo.Categories.length > 0
+                            ? `<div class="d-flex flex-wrap">
+                            ${photo.Categories.map(cat => `
+                                <div class="categories m-1 p-1 text-white">${cat.Name}</div>
+                            `).join('')}
+                       </div>`
+                            : `<span class="fw-bold">Nessuna categoria assegnata alla foto.</span>`;
+
+                        const photoHtml = `
+                    <div class="col col-12 mb-3 d-flex justify-content-center">
+                        <div class="card my-list-card h-100 mb-3" style="width: 22rem;">
+                            <div class="position-relative">
+                                <img src="${photo.imgSrc}" class="img-fluid rounded-start" alt="${photo.title}"/>
+                                <span class="position-absolute top-0 end-0 m-2">
+                                    <i class="fa-solid fa-circle ${photo.visible ? 'text-success' : 'text-danger'}"></i>
+                                    <span class="badge ${photo.visible ? 'bg-success' : 'bg-danger'} text-white fw-bold">
+                                        ${photo.visible ? 'Pubblico' : 'Bozza'}
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${photo.title}</h5>
+                                <p class="card-text">${photo.description}</p>
+                                <p class="card-text mb-0">
+                                    Categoria assegnata: ${categoriesHtml}
+                                </p>
+                            </div>
+                        </div>
+                    </div>`;
+
+                        console.log('Generated HTML:', photoHtml);
+                        photoShow.innerHTML += photoHtml;
+                    });
+                }
+            }).catch((error) => {
+                console.error('Error fetching photos:', error);
+            });
+    }
+
+    // RICHIAMO FUNZIONE PER CARICARE LA LISTA
+    loadList('');
+
+    // FUNZIONE PER RICERCARE UNA FOTO COL SUO NOME
+    function search() {
+        loadList(this.value);
+    }
+
+    document.querySelector('.js-search').addEventListener('keyup', search)
+</script>
