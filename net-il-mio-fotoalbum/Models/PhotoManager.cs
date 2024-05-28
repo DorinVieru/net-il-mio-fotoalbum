@@ -57,6 +57,17 @@ namespace net_il_mio_fotoalbum.Models
                           .ThenInclude(pc => pc.photos).ToList();
         }
 
+        // OTTENERE LA LISTA DI TUTTE LE FOTO CON FILTRO
+        public static List<Photo> GetAllPhotosFilter(string? search)
+        {
+            using PhotoContext db = new PhotoContext();
+
+            if (search == null)
+                return db.Photos.ToList();
+
+            return db.Photos.Where(p => p.Title.ToLower().Contains(search.ToLower())).ToList();
+        }
+
         // MODIFICARE UNA FOTO
         public static bool UpdatePhoto(int id, Photo dataPhoto, List<string> categories)
         {
