@@ -1,4 +1,7 @@
-﻿@{
+﻿@using net_il_mio_fotoalbum.Models
+@model ContactMessage
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -27,9 +30,9 @@
 </div>
 
 @*CONTACT FORM*@
-<div class="container">
-    <div class="row bg-warning bg-opacity-25 rounded rounded-3 p-0 my-5">
-        <div class="col-6 d-flex align-items-center p-0">
+<div class="container mt-5 mb-2">
+    <div class="row bg-warning bg-opacity-50 rounded rounded-3 p-0 my-5">
+        <div class="col-6 d-flex p-0">
             <div>
                 <img src="~/img/img-photo-bg.jpg" alt="" class="card-img rounded-3" style="height:100%; object-fit: cover;" />
             </div>
@@ -37,22 +40,30 @@
         <div class="col-6">
             <div class="p-3">
                 <div class="text-center d-flex flex-column align-items-center">
-                    <h3 class="border-bottom border-primary w-75 mb-4 pb-2"><i class="fa-solid fa-square-envelope"></i> <span class="my-title fw-bold">Contattami</span> per info</h3>
+                    <h3 class="border-bottom border-primary w-75 mb-4 pb-2"><span class="my-title fw-bold"> <i class="fa-solid fa-square-envelope"></i> Contattami</span> per info</h3>
                 </div>
-                <form class="pt-5" asp-controller="" id="contactForm">
+                <div id="successMessage" class="alert alert-success mt-3 d-none">
+                    Il tuo messaggio è stato inviato con successo!
+                </div>
+                <form class="pt-2" asp-controller="" id="contactForm">
                     <div class="mb-3">
-                        <label for="name" class="form-label">Nome</label>
-                        <input type="text" name="name" class="form-control" id="name">
+                        <label for="nameuser" class="form-label">Nome</label>
+                        <input type="text" name="nameuser" class="form-control" id="nameuser">
+                        <span asp-validation-for="Name" class="text-danger fw-bold"></span>
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Indirizzo E-Mail</label>
                         <input type="email" name="email" class="form-control" id="email" placeholder="esempio@iltuoprovider.com" aria-describedby="emailHelp">
+                        <span asp-validation-for="Email" class="text-danger fw-bold"></span>
                     </div>
                     <div class="mb-3">
                         <label for="message" class="form-label">Messaggio</label>
                         <textarea id="message" name="message" class="form-control" rows="5"></textarea>
+                        <span asp-validation-for="Message" class="text-danger fw-bold"></span>
                     </div>
-                    <button type="submit" class="btn btn-primary">Invia</button>
+                    <div class="text-center">
+                        <input type="submit" class="btn btn-primary fs-5 px-4 btn-crea-modifica" value="Invia">
+                    </div>
                 </form>
             </div>
         </div>
@@ -123,7 +134,6 @@
                                 </div>
                             </div>`;
 
-                        console.log('Generated HTML:', photoHtml);
                         photoShow.innerHTML += photoHtml;
                     });
                 }
@@ -146,19 +156,26 @@
     function sendMessage() {
         document.querySelector('#contactForm').addEventListener('submit', function (e) {
             e.preventDefault();
+            const nameuser = document.getElementById('nameuser').value;
             const email = document.getElementById('email').value;
             const message = document.getElementById('message').value;
-            try {
-                const response = axios.post('api/PhotoWebApi/ContactFormSend', {
-                    name: name;
-                    email: email,
-                    message: message
+            axios.post('api/PhotoWebApi/ContactFormSend', {
+                name: nameuser,
+                email: email,
+                message: message
+            })
+                .then(response => {
+                    // Messaggio di successo
+                    const successMessage = document.getElementById('successMessage');
+                    successMessage.classList.add('d-block');
+                    // Ricarica la pagina
+                    setTimeout(() => {
+                        location.reload();
+                    }, 5000);
+                })
+                .catch(error => {
+                    console.log(error);
                 });
-
-            } catch (error) {
-                console.log(error);
-                alert('Invio fallito')
-            }
         });
     }
 
