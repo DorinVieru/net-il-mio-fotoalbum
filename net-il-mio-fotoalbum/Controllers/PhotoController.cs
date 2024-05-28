@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace net_il_mio_fotoalbum.Controllers
 {
-    [Authorize]
     public class PhotoController : Controller
     {
         public IActionResult Index()

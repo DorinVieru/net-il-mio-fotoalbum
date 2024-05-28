@@ -1,5 +1,124 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using net_il_mio_fotoalbum.Models
+@model Category
+
 @{
+    ViewData["Title"] = "Dettagli Pizza";
+    var defaultImagePath = Url.Content("~/img/no-image.jpg");
 }
+
+<div class="container">
+    <h1 class="display-4 text-center">Categoria <span class="fw-bold my-title">@Model.Name</span></h1>
+    <div class="row">
+        <div class="col-12">
+            @if (Model.photos != null && Model.photos.Count > 0)
+            {
+                @foreach (var photo in Model.photos)
+                {
+                    <div class="card detail-card my-3">
+                        <div class="row g-0">
+                            <div class="col-lg-4">
+                                <img src="@(string.IsNullOrEmpty(photo.ImgSrc) ? defaultImagePath : photo.ImgSrc)" class="img-fluid rounded-start" alt="@photo.Title">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <p class="card-text fs-5">Descizione: @photo.Description</p>
+                                    <p class="card-text fs-6">
+                                        @if (photo.Visible)
+                                        {
+                                            <i class="fa-solid fa-circle text-success"></i> <span class="badge bg-success text-white fw-bold">Pubblico</span>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa-solid fa-circle text-danger"></i> <span class="badge bg-danger text-white fw-bold">Bozza</span>
+                                        }
+                                    </p>
+                                    <p class="card-text mb-0">
+                                        Categoria assegnata:
+                                        @if (photo.Categories?.Count > 0)
+                                        {
+                                            <div class="d-flex flex-wrap">
+                                                @foreach (var cat in photo.Categories)
+                                                {
+                                                    <div class="categories m-1 p-1 text-white"> @cat.Name </div>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="fw-bold">Nessuna categoria assegnata alla foto.</span>
+                                        }
+
+                                    </p>
+                                    @if (User.IsInRole("SuperAdmin"))
+                                    {
+                                        @*MODIFICA*@
+                                        <a href="@Url.Action("Update", "Photo", new { id = photo.Id })" class="btn btn-warning my-2"><i class="fa-solid fa-pen-to-square"></i> Modifica</a>
+                                        @*CANCELLAZIONE*@
+                                        <a href="javascript:void(0);" class="btn btn-danger px-5" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-form-id="@photo.Id" data-pizza-name="@photo.Title" onclick="setFormId('@photo.Id', '@photo.Title')">
+                                            <i class="fa-solid fa-trash"></i> Cancella
+                                        </a>
+                                        <form id="deletePhotoForm-@photo.Id" asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post" class="d-none">
+                                            @Html.AntiForgeryToken()
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        @if (User.IsInRole("User"))
+        {
+            <div class="col-12 mb-5 text-center">
+                <a href="@Url.Action("Index", "Category")" class="btn btn-primary">Torna all'elenco di tutte le categorie</a>
+            </div>
+        }
+        else
+        {
+            <div class="col-12 mb-5 text-center">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Torna alla home</a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- MODALE -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Conferma Cancellazione</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Sei sicuro di voler cancellare la foto <span id="photoName"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JAVASCRIPT PER LA MODALE -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let formIdToDelete = null;
+
+        function setFormId(formId, photoName) {
+            formIdToDelete = formId;
+            document.getElementById('photoName').textContent = photoName;
+        }
+
+        // setFormId disponibile globalmente
+        window.setFormId = setFormId;
+
+        document.getElementById('confirmDeleteButton').addEventListener('click', function () {
+            if (formIdToDelete) {
+                document.getElementById('deletePhotoForm-' + formIdToDelete).submit();
+            }
+        });
+    });
+</script>

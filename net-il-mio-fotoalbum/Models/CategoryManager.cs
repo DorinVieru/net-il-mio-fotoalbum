@@ -45,7 +45,8 @@ namespace net_il_mio_fotoalbum.Models
 
                 if (includeReferences)
                     return db.Categories.Where(c => c.Id == id).Include(p => p.photos).FirstOrDefault();
-                return db.Categories.FirstOrDefault(p => p.Id == id);
+                
+                return db.Categories.FirstOrDefault(c => c.Id == id);
 
             }
             catch (Exception ex)

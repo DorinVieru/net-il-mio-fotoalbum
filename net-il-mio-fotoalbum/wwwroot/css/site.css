@@ -88,6 +88,11 @@ li {
     background-color: #3A008A;
     border: solid #3A008A;
     border-radius: 5px;
+    transition: transform 0.3s;
+}
+
+.categories:hover {
+    transform: scale(1.03);
 }
 
 .personal-bg {

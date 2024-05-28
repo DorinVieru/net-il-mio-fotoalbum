@@ -36,7 +36,7 @@
                                     <div class="d-flex flex-wrap">
                                         @foreach (var cat in Model.Categories)
                                         {
-                                            <div class="categories m-1 p-1 text-white"> @cat.Name </div>
+                                            <div class="categories m-1 p-1 text-white"> <a class="text-decoration-none text-white link-cat" href="@Url.Action("Details", "Category", new { id = cat.Id })"> @cat.Name </a> </div>
                                         }
                                     </div>
                                 }
@@ -63,9 +63,18 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 mb-5 text-center">
-            <a href="@Url.Action("Index", "Photo")" class="btn btn-primary">Torna all'elenco di tutte le foto</a>
-        </div>
+        @if (User.IsInRole("User"))
+        {
+            <div class="col-12 mb-5 text-center">
+                <a href="@Url.Action("Index", "Photo")" class="btn btn-primary">Torna all'elenco di tutte le foto</a>
+            </div>
+        }
+        else
+        {
+            <div class="col-12 mb-5 text-center">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Torna alla home</a>
+            </div>
+        }
     </div>
 </div>
 

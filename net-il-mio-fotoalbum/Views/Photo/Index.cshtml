@@ -8,157 +8,173 @@
     var defaultImagePath = Url.Content("~/img/no-image.jpg");
 }
 
-<div class="col-12 my-5 text-center">
-    <div class="row pe-0">
-        <div class="col-12 col-md-6 text-md-start pb-3 pb-md-0">
-            <form class="d-flex justify-content-center justify-content-md-start" role="search">
-                <input class="form-control w-75" id="Filter" type="search" placeholder="Cerca per nome..." aria-label="Search">
-                <button class="btn btn-outline-warning ms-2 px-3" type="submit">Cerca</button>
-            </form>
-        </div>
-        @if (User.IsInRole("SuperAdmin"))
-        {
-            <div class="col-12 col-md-6 text-md-end pe-0 me-0">
-                <a href="@Url.Action("Create", "Photo")" class="btn btn-primary fs-5">Crea una nuova foto</a>
+@if (User.IsInRole("SuperAdmin"))
+{
+    <div class="col-12 my-5 text-center">
+        <div class="row pe-0">
+            <div class="col-12 col-md-6 text-md-start pb-3 pb-md-0">
+                <form class="d-flex justify-content-center justify-content-md-start" role="search">
+                    <input class="form-control w-75" id="Filter" type="search" placeholder="Cerca per nome..." aria-label="Search">
+                    <button class="btn btn-outline-warning ms-2 px-3" type="submit">Cerca</button>
+                </form>
             </div>
-        }
-    </div>
-</div>
-
-<div class="col-12">
-    @if (User.IsInRole("SuperAdmin"))
-    {
-        <div class="btn-group" role="group" aria-label="View Switcher">
-            <input type="radio" class="btn-check" name="viewSwitcher" id="cardViewRadio" autocomplete="off" checked>
-            <label class="btn btn-outline-warning" for="cardViewRadio">
-                <i class="fa-solid fa-box"></i> Card
-            </label>
-
-            <input type="radio" class="btn-check" name="viewSwitcher" id="tableViewRadio" autocomplete="off">
-            <label class="btn btn-outline-warning" for="tableViewRadio">
-                <i class="fa-solid fa-table"></i> Tabella
-            </label>
-        </div>
-    }
-
-    @if (Model.Any())
-    {
-        // CARD
-        <div id="cardView" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 mt-3 mb-5">
-            @foreach (var photo in Model)
+            @if (User.IsInRole("SuperAdmin"))
             {
-                <div class="col mb-3 d-flex justify-content-center myPhoto">
-                    <div class="card my-list-card h-100 mb-3" style="width: 22rem;">
-                        <div class="position-relative">
-                            <img src="@(string.IsNullOrEmpty(photo.ImgSrc) ? defaultImagePath : photo.ImgSrc)" class="img-fluid rounded-start" alt="@photo.Title">
-                            <span class="position-absolute top-0 end-0 m-2">
-                                @if (photo.Visible)
-                                {
-                                    <i class="fa-solid fa-circle text-success"></i> <span class="badge bg-success text-white fw-bold">Pubblico</span>
-                                }
-                                else
-                                {
-                                    <i class="fa-solid fa-circle text-danger"></i> <span class="badge bg-danger text-white fw-bold">Bozza</span>
-                                }
-                            </span>
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <div class="filter-text d-none">@photo.Title</div>
-                            <h5 class="card-title">@photo.Title</h5>
-                            <p class="card-text">@photo.Description</p>
-                            <p class="card-text mb-0">
-                                Categoria assegnata:
-                                @if (photo.Categories?.Count > 0)
-                                {
-                                    <div class="d-flex flex-wrap">
-                                        @foreach (var cat in photo.Categories)
-                                        {
-                                            <div class="categories m-1 p-1 text-white"> @cat.Name </div>
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <span class="fw-bold">Nessuna categoria assegnata alla foto.</span>
-                                }
-                            </p>
-                            @*VISUALIZZAZIONE DETTAGLI*@
-                            <a href="@Url.Action("Details", "Photo", new { id = photo.Id })" class="btn btn-primary mt-auto"><i class="fa-solid fa-eye"></i> Visualizza dettagli</a>
-
-                            @if (User.IsInRole("SuperAdmin"))
-                            {
-                                @*MODIFICA*@
-                                <a href="@Url.Action("Update", "Photo", new { id = photo.Id })" class="btn btn-warning my-2"><i class="fa-solid fa-pen-to-square"></i> Modifica</a>
-                                @*CANCELLAZIONE*@
-                                <a href="javascript:void(0);" class="btn btn-danger px-5" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-form-id="@photo.Id" data-pizza-name="@photo.Title" onclick="setFormId('@photo.Id', '@photo.Title')">
-                                    <i class="fa-solid fa-trash"></i> Cancella
-                                </a>
-                                <form id="deletePhotoForm-@photo.Id" asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post" class="d-none">
-                                    @Html.AntiForgeryToken()
-                                </form>
-                            }
-                        </div>
-                    </div>
+                <div class="col-12 col-md-6 text-md-end pe-0 me-0">
+                    <a href="@Url.Action("Create", "Photo")" class="btn btn-primary fs-5">Crea una nuova foto</a>
                 </div>
             }
         </div>
-        <div id="noResultsMessage" class="row justify-content-center d-none">
+    </div>
+
+    <div class="col-12">
+        @if (User.IsInRole("SuperAdmin"))
+        {
+            <div class="btn-group" role="group" aria-label="View Switcher">
+                <input type="radio" class="btn-check" name="viewSwitcher" id="cardViewRadio" autocomplete="off" checked>
+                <label class="btn btn-outline-warning" for="cardViewRadio">
+                    <i class="fa-solid fa-box"></i> Card
+                </label>
+
+                <input type="radio" class="btn-check" name="viewSwitcher" id="tableViewRadio" autocomplete="off">
+                <label class="btn btn-outline-warning" for="tableViewRadio">
+                    <i class="fa-solid fa-table"></i> Tabella
+                </label>
+            </div>
+        }
+
+        @if (Model.Any())
+        {
+            // CARD
+            <div id="cardView" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 mt-3 mb-5">
+                @foreach (var photo in Model)
+                {
+                    <div class="col mb-3 d-flex justify-content-center myPhoto">
+                        <div class="card my-list-card h-100 mb-3" style="width: 22rem;">
+                            <div class="position-relative">
+                                <img src="@(string.IsNullOrEmpty(photo.ImgSrc) ? defaultImagePath : photo.ImgSrc)" class="img-fluid rounded-start" alt="@photo.Title">
+                                <span class="position-absolute top-0 end-0 m-2">
+                                    @if (photo.Visible)
+                                    {
+                                        <i class="fa-solid fa-circle text-success"></i> <span class="badge bg-success text-white fw-bold">Pubblico</span>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa-solid fa-circle text-danger"></i> <span class="badge bg-danger text-white fw-bold">Bozza</span>
+                                    }
+                                </span>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <div class="filter-text d-none">@photo.Title</div>
+                                <h5 class="card-title">@photo.Title</h5>
+                                <p class="card-text">@photo.Description</p>
+                                <p class="card-text mb-0">
+                                    Categoria assegnata:
+                                    @if (photo.Categories?.Count > 0)
+                                    {
+                                        <div class="d-flex flex-wrap">
+                                            @foreach (var cat in photo.Categories)
+                                            {
+                                                <div class="categories m-1 p-1 text-white"> @cat.Name </div>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="fw-bold">Nessuna categoria assegnata alla foto.</span>
+                                    }
+                                </p>
+                                @*VISUALIZZAZIONE DETTAGLI*@
+                                <a href="@Url.Action("Details", "Photo", new { id = photo.Id })" class="btn btn-primary mt-auto"><i class="fa-solid fa-eye"></i> Visualizza dettagli</a>
+
+                                @if (User.IsInRole("SuperAdmin"))
+                                {
+                                    @*MODIFICA*@
+                                    <a href="@Url.Action("Update", "Photo", new { id = photo.Id })" class="btn btn-warning my-2"><i class="fa-solid fa-pen-to-square"></i> Modifica</a>
+                                    @*CANCELLAZIONE*@
+                                    <a href="javascript:void(0);" class="btn btn-danger px-5" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-form-id="@photo.Id" data-pizza-name="@photo.Title" onclick="setFormId('@photo.Id', '@photo.Title')">
+                                        <i class="fa-solid fa-trash"></i> Cancella
+                                    </a>
+                                    <form id="deletePhotoForm-@photo.Id" asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post" class="d-none">
+                                        @Html.AntiForgeryToken()
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div id="noResultsMessage" class="row justify-content-center d-none">
+                <div class="col-12 text-center">
+                    <p class="text-danger fs-4 fw-bold">Nessuna foto trovata con il filtro applicato.</p>
+                </div>
+            </div>
+            // TABELLA
+            <div id="tableView" class="d-none mt-3 mb-5">
+                <table class="table table-striped">
+                    <thead>
+                        <tr class="table-dark">
+                            <th>Nome</th>
+                            <th class="d-none d-lg-table-cell">Img</th>
+                            <th class="d-none d-md-table-cell">Descrizione</th>
+                            <th>Visibilità</th>
+                            <th>Strumenti</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var photo in Model)
+                        {
+                            <tr class="myPhoto my-list-card">
+
+                                <td class="filter-text d-none">@photo.Title</td>
+                                <td>@($"{photo.Title.SafeSubstring(20)}")</td>
+                                <td class="d-none d-lg-table-cell"> <img src="@(string.IsNullOrEmpty(photo.ImgSrc) ? defaultImagePath : photo.ImgSrc)" class="img-fluid rounded-3" alt="@photo.Title" style="width: 100px;"> </td>
+                                <td class="d-none d-md-table-cell">@($"{photo.Description.SafeSubstring(20)}")</td>
+                                <td class="text-center text-md-start">
+                                    @if (photo.Visible)
+                                    {
+                                        <i class="fa-solid fa-circle text-success"></i> <span class="badge bg-success text-white fw-bold d-none d-md-inline-block">Pubblico</span>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa-solid fa-circle text-danger"></i> <span class="badge bg-danger text-white fw-bold d-none d-md-inline-block">Bozza</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("Details", "Photo", new { id = photo.Id })" class="btn btn-primary"><i class="fa-solid fa-eye"></i></a>
+                                    <a href="@Url.Action("Update", "Photo", new { id = photo.Id })" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <form id="deletePhotoForm-@photo.Id" data-form-id="@photo.Id" asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setFormId('@photo.Id', '@photo.Title')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-danger fs-4 fw-bold py-5">Nessuna foto presente al momento.</p>
+        }
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row">
             <div class="col-12 text-center">
-                <p class="text-danger fs-4 fw-bold">Nessuna foto trovata con il filtro applicato.</p>
+                <h1 class="display-4 mt-5 text-danger fw-bold">Non sei autorizzato ad accedere a questo contenuto.</h1>
+            </div>
+            <div class="col-12 my-5 text-center">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-2 mt-md-0">Ricomincia dalla Home</a>
             </div>
         </div>
-        // TABELLA
-        <div id="tableView" class="d-none mt-3 mb-5">
-            <table class="table table-striped">
-                <thead>
-                    <tr class="table-dark">
-                        <th>Nome</th>
-                        <th class="d-none d-lg-table-cell">Img</th>
-                        <th class="d-none d-md-table-cell">Descrizione</th>
-                        <th>Visibilità</th>
-                        <th>Strumenti</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var photo in Model)
-                    {
-                        <tr class="myPhoto my-list-card">
-
-                            <td class="filter-text d-none">@photo.Title</td>
-                            <td>@($"{photo.Title.SafeSubstring(20)}")</td>
-                            <td class="d-none d-lg-table-cell"> <img src="@(string.IsNullOrEmpty(photo.ImgSrc) ? defaultImagePath : photo.ImgSrc)" class="img-fluid rounded-3" alt="@photo.Title" style="width: 100px;"> </td>
-                            <td class="d-none d-md-table-cell">@($"{photo.Description.SafeSubstring(20)}")</td>
-                            <td class="text-center text-md-start">
-                                @if (photo.Visible)
-                                {
-                                    <i class="fa-solid fa-circle text-success"></i> <span class="badge bg-success text-white fw-bold d-none d-md-inline-block">Pubblico</span>
-                                }
-                                else
-                                {
-                                    <i class="fa-solid fa-circle text-danger"></i> <span class="badge bg-danger text-white fw-bold d-none d-md-inline-block">Bozza</span>
-                                }
-                            </td>
-                            <td>
-                                <a href="@Url.Action("Details", "Photo", new { id = photo.Id })" class="btn btn-primary"><i class="fa-solid fa-eye"></i></a>
-                                <a href="@Url.Action("Update", "Photo", new { id = photo.Id })" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
-                                <form id="deletePhotoForm-@photo.Id" data-form-id="@photo.Id" asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setFormId('@photo.Id', '@photo.Title')">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-    else
-    {
-        <p class="text-danger fs-4 fw-bold py-5">Nessuna foto presente al momento.</p>
-    }
-</div>
+    </div>
+}
 
 <!-- MODALE -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">

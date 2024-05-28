@@ -11,7 +11,7 @@
             <div class="col-6 text-start">
                 <form class="d-flex" role="search">
                     <input class="form-control w-50 js-search" type="search" placeholder="Cerca per nome..." aria-label="Search">
-                    <button class="btn btn-outline-success ms-2 px-3" type="submit">Cerca</button>
+                    <button class="btn btn-outline-warning ms-2 px-3" type="submit">Cerca</button>
                 </form>
             </div>
         </div>
@@ -54,35 +54,41 @@
                     res.data.forEach((photo) => {
                         console.log('Rendering photo:', photo);
 
-                        const categoriesHtml = photo.Categories && photo.Categories.length > 0
-                            ? `<div class="d-flex flex-wrap">
-                            ${photo.Categories.map(cat => `
-                                <div class="categories m-1 p-1 text-white">${cat.Name}</div>
-                            `).join('')}
-                       </div>`
-                            : `<span class="fw-bold">Nessuna categoria assegnata alla foto.</span>`;
+                        let categoriesHtml = '';
+                        if (photo.Categories && photo.Categories.length > 0) {
+                            categoriesHtml = '<div class="d-flex flex-wrap">';
+                            photo.Categories.forEach(cat => {
+                                categoriesHtml += `<div class="categories m-1 p-1 text-white">
+                                                        <a href="/Category/Details/${cat.Id}" class="text-white">${cat.Name}</a>
+                                                   </div>`;
+                            });
+                            categoriesHtml += '</div>';
+                        } else {
+                            categoriesHtml = '<span class="fw-bold">Nessuna categoria assegnata alla foto.</span>';
+                        }
 
                         const photoHtml = `
-                    <div class="col col-12 mb-3 d-flex justify-content-center">
-                        <div class="card my-list-card h-100 mb-3" style="width: 22rem;">
-                            <div class="position-relative">
-                                <img src="${photo.imgSrc}" class="img-fluid rounded-start" alt="${photo.title}"/>
-                                <span class="position-absolute top-0 end-0 m-2">
-                                    <i class="fa-solid fa-circle ${photo.visible ? 'text-success' : 'text-danger'}"></i>
-                                    <span class="badge ${photo.visible ? 'bg-success' : 'bg-danger'} text-white fw-bold">
-                                        ${photo.visible ? 'Pubblico' : 'Bozza'}
-                                    </span>
-                                </span>
-                            </div>
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">${photo.title}</h5>
-                                <p class="card-text">${photo.description}</p>
-                                <p class="card-text mb-0">
-                                    Categoria assegnata: ${categoriesHtml}
-                                </p>
-                            </div>
-                        </div>
-                    </div>`;
+                            <div class="col col-12 mb-3 d-flex justify-content-center">
+                                <div class="card my-list-card h-100 mb-3" style="width: 22rem;">
+                                    <div class="position-relative">
+                                        <img src="${photo.imgSrc}" class="img-fluid rounded-start" alt="${photo.title}"/>
+                                        <span class="position-absolute top-0 end-0 m-2">
+                                            <i class="fa-solid fa-circle ${photo.visible ? 'text-success' : 'text-danger'}"></i>
+                                            <span class="badge ${photo.visible ? 'bg-success' : 'bg-danger'} text-white fw-bold">
+                                                ${photo.visible ? 'Pubblico' : 'Bozza'}
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">${photo.title}</h5>
+                                        <p class="card-text">${photo.description}</p>
+                                        <p class="card-text mb-0">
+                                            Categoria assegnata: ${categoriesHtml}
+                                        </p>
+                                        <a href="/Photo/Details/${photo.id}" class="btn btn-primary mt-auto"><i class="fa-solid fa-eye"></i> Visualizza dettagli</a>
+                                    </div>
+                                </div>
+                            </div>`;
 
                         console.log('Generated HTML:', photoHtml);
                         photoShow.innerHTML += photoHtml;
