@@ -9,7 +9,7 @@ namespace net_il_mio_fotoalbum.Controllers
     {
         public IActionResult Index()
         {
-            var categories = PhotoManager.GetAllCategories();
+            var categories = CategoryManager.GetAllCategories();
             return View(categories);
         }
 

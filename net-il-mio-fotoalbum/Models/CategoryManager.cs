@@ -8,7 +8,7 @@ namespace net_il_mio_fotoalbum.Models
     public class CategoryManager
     {
         // AGGIUNTA DI UNA CATEGORIA
-        public static void InsertCategory(Category category, List<string> selectedPhotos)
+        public static void InsertCategory(Category category, List<string> selectedPhotos = null)
         {
             using PhotoContext db = new PhotoContext();
             
@@ -19,14 +19,21 @@ namespace net_il_mio_fotoalbum.Models
                 {
                     int id = int.Parse(photoId);
                     var photo = db.Photos.FirstOrDefault(c => c.Id == id);
-                    if (photo != null)
-                        category.photos.Add(photo);
+                    category.photos.Add(photo);
                 }
             }
 
             db.Categories.Add(category);
             db.SaveChanges();
 
+        }
+
+        // OTTENERE LA LISTA DI TUTTE LE CATEGORIE
+        public static List<Category> GetAllCategories()
+        {
+            using PhotoContext db = new PhotoContext();
+
+            return db.Categories.Include(c => c.photos).ToList();
         }
 
         // RECUPERARE UNA CATEGORIA TRAMITE IL SUO ID
@@ -102,7 +109,7 @@ namespace net_il_mio_fotoalbum.Models
         public static List<Photo> GetAllPhotos()
         {
             using PhotoContext db = new PhotoContext();
-            return db.Photos.ToList();
+            return db.Photos.Include(p => p.Categories).ToList();
         }
     } 
 }

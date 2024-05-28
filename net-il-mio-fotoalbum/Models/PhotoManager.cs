@@ -61,25 +61,26 @@ namespace net_il_mio_fotoalbum.Models
         public static bool UpdatePhoto(int id, Photo dataPhoto, List<string> categories)
         {
             using PhotoContext db = new PhotoContext();
-            var photo = db.Photos.Where(p => p.Id == id).Include(c => c.Categories).FirstOrDefault();
+            var photoEdit = db.Photos.Where(p => p.Id == id).Include(c => c.Categories).FirstOrDefault();
 
-            if (photo == null)
+            if (photoEdit == null)
                 return false;
 
-            photo.Title = dataPhoto.Title;
-            photo.Description = dataPhoto.Description;
-            if(photo.ImgSrc != null)
-                photo.ImgFile = dataPhoto.ImgFile;
-            photo.Visible = dataPhoto.Visible;
+            photoEdit.Title = dataPhoto.Title;
+            photoEdit.Description = dataPhoto.Description;
+            if(dataPhoto.ImgFile != null)
+                 photoEdit.ImgFile = dataPhoto.ImgFile;
 
-            photo.Categories.Clear(); // Prima svuoto così da salvare solo le informazioni che l'utente ha scelto
+            photoEdit.Visible = dataPhoto.Visible;
+
+            photoEdit.Categories.Clear(); // Prima svuoto così da salvare solo le informazioni che l'utente ha scelto
             if (categories != null)
             {
                 foreach (var cat in categories)
                 {
                     int categoryID = int.Parse(cat);
                     var categoryDb = db.Categories.FirstOrDefault(x => x.Id == categoryID);
-                    photo.Categories.Add(categoryDb);
+                    photoEdit.Categories.Add(categoryDb);
                 }
             }
 

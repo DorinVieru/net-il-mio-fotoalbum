@@ -17,7 +17,7 @@ namespace net_il_mio_fotoalbum.Models
         public void CreatePhotos()
         {
             this.Photos = new List<SelectListItem>();
-            if (SelectedPhotos == null)
+            if (this.SelectedPhotos == null)
                 this.SelectedPhotos = new List<string>();
             var photosFromDb = CategoryManager.GetAllPhotos();
             foreach (var photo in photosFromDb)
