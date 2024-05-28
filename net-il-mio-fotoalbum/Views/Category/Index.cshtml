@@ -1,5 +1,134 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using net_il_mio_fotoalbum.Models
+@using net_il_mio_fotoalbum.Code
+@model List<Category>
+
 @{
+    ViewData["Title"] = "Lista Categorie";
 }
+
+<div class="col-12 my-5 text-center">
+    <div class="row pe-0">
+        <div class="col-12 col-md-6 text-md-start pb-3 pb-md-0">
+            <form class="d-flex justify-content-center justify-content-md-start" role="search">
+                <input class="form-control w-75" id="Filter" type="search" placeholder="Cerca per nome..." aria-label="Search">
+                <button class="btn btn-outline-warning ms-2 px-3" type="submit">Cerca</button>
+            </form>
+        </div>
+        @if (User.IsInRole("SuperAdmin"))
+        {
+            <div class="col-12 col-md-6 text-md-end pe-0 me-0">
+                <a href="@Url.Action("Create", "Category")" class="btn btn-primary fs-5">Crea una nuova Categoria</a>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="col-12">
+    @if (Model.Any())
+    {
+        <div id="noResultsMessage" class="row justify-content-center d-none">
+            <div class="col-12 text-center">
+                <p class="text-danger fs-4 fw-bold">Nessuna foto trovata con il filtro applicato.</p>
+            </div>
+        </div>
+        // TABELLA
+        <div id="tableView" class="d-none mt-3 mb-5">
+            <table class="table table-striped">
+                <thead>
+                    <tr class="table-dark">
+                        <th>Nome</th>
+                        <th>Strumenti</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var category in Model)
+                    {
+                        <tr class="myPhoto my-list-card">
+
+                            <td class="filter-text d-none">@category.Name</td>
+                            <td>@($"{category.Name.SafeSubstring(20)}")</td>
+                            <td>
+                                <a href="@Url.Action("Details", "Category", new { id = category.Id })" class="btn btn-primary"><i class="fa-solid fa-eye"></i></a>
+                                <a href="@Url.Action("Update", "Category", new { id = category.Id })" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
+                                <form id="deletePhotoForm-@category.Id" data-form-id="@category.Id" asp-controller="Photo" asp-action="Delete" asp-route-id="@category.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setFormId('@category.Id', '@category.Name')">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="text-danger fs-4 fw-bold py-5">Nessuna categoria presente al momento.</p>
+    }
+</div>
+
+<!-- MODALE -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Conferma Cancellazione</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Sei sicuro di voler cancellare la categoria <span id="photoName"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JAVASCRIPT PER LA MODALE E SWITCH -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let formIdToDelete = null;
+
+        function setFormId(formId, photoName) {
+            formIdToDelete = formId;
+            document.getElementById('photoName').textContent = photoName;
+        }
+
+        // setFormId disponibile globalmente
+        window.setFormId = setFormId;
+
+        document.getElementById('confirmDeleteButton').addEventListener('click', function () {
+            if (formIdToDelete) {
+                document.getElementById('deletePhotoForm-' + formIdToDelete).submit();
+            }
+        });
+
+        // FILTRO RICERCA
+        document.getElementById('Filter').addEventListener('keyup', function () {
+            var filter = this.value.toLowerCase();
+            var photos = document.querySelectorAll('.myPhoto');
+            var noResultsMessage = document.getElementById('noResultsMessage');
+            var resultsFound = false;
+
+            photos.forEach(function (photo) {
+                var title = photo.querySelector('.filter-text').innerText.toLowerCase();
+                if (title.includes(filter)) {
+                    photo.classList.remove('d-none');
+                    resultsFound = true;
+                } else {
+                    photo.classList.add('d-none');
+                }
+            });
+
+            if (resultsFound) {
+                noResultsMessage.classList.add('d-none');
+            } else {
+                noResultsMessage.classList.remove('d-none');
+            }
+        });
+    });
+</script>
