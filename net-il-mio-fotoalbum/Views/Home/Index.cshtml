@@ -5,7 +5,7 @@
 <div class="container">
     <div class="row">
         <div class="col-12 mb-3 d-flex justify-content-center">
-            <h1>Lista delle Foto</h1>
+            <h1 class="my-title">Lista delle Foto</h1>
         </div>
         <div class="row pe-0">
             <div class="col-6 text-start">
@@ -23,6 +23,39 @@
     </div>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 mt-3 mb-5 js-photo-show d-none">
         @*Elenco delle foto*@
+    </div>
+</div>
+
+@*CONTACT FORM*@
+<div class="container">
+    <div class="row bg-warning bg-opacity-25 rounded rounded-3 p-0 my-5">
+        <div class="col-6 d-flex align-items-center p-0">
+            <div>
+                <img src="~/img/img-photo-bg.jpg" alt="" class="card-img rounded-3" style="height:100%; object-fit: cover;" />
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="p-3">
+                <div class="text-center d-flex flex-column align-items-center">
+                    <h3 class="border-bottom border-primary w-75 mb-4 pb-2"><i class="fa-solid fa-square-envelope"></i> <span class="my-title fw-bold">Contattami</span> per info</h3>
+                </div>
+                <form class="pt-5" asp-controller="" id="contactForm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nome</label>
+                        <input type="text" name="name" class="form-control" id="name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Indirizzo E-Mail</label>
+                        <input type="email" name="email" class="form-control" id="email" placeholder="esempio@iltuoprovider.com" aria-describedby="emailHelp">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Messaggio</label>
+                        <textarea id="message" name="message" class="form-control" rows="5"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Invia</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -108,4 +141,26 @@
     }
 
     document.querySelector('.js-search').addEventListener('keyup', search)
+
+    // FUNZIONE PER INVIO FORM
+    function sendMessage() {
+        document.querySelector('#contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            try {
+                const response = axios.post('api/PhotoWebApi/ContactFormSend', {
+                    name: name;
+                    email: email,
+                    message: message
+                });
+
+            } catch (error) {
+                console.log(error);
+                alert('Invio fallito')
+            }
+        });
+    }
+
+    sendMessage();
 </script>

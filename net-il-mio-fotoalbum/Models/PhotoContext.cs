@@ -12,6 +12,7 @@ namespace net_il_mio_fotoalbum.Models
         private const string SqlServer = "Data Source=localhost;Initial Catalog=photos;Integrated Security=True;Trust Server Certificate=True";
         public DbSet<Photo> Photos { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<ContactMessage> Messages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

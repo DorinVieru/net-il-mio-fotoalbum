@@ -56,5 +56,12 @@ namespace net_il_mio_fotoalbum.Controllers
             
             return NotFound();
         }
+
+        [HttpPost]
+        public IActionResult ContactFormSend([FromBody] ContactMessage message)
+        {
+            ContactFormManager.InsertMessage(message);
+            return Ok();
+        }
     }
 }
