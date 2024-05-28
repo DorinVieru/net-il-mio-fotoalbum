@@ -40,7 +40,7 @@ namespace net_il_mio_fotoalbum.Controllers
             return View(model);
         }
 
-        // CREAZIONE POST al click del pulsante CREATE
+        // CREAZIONE POST al click del pulsante CREA
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(PhotoFormModel photoInsert)
@@ -62,11 +62,11 @@ namespace net_il_mio_fotoalbum.Controllers
         [Authorize(Roles = "SuperAdmin")]
         public IActionResult Update(int id)
         {
-            var pizzaModificata = PhotoManager.GetPhotoById(id);
-            if (pizzaModificata == null)
+            var photoUpdate = PhotoManager.GetPhotoById(id);
+            if (photoUpdate == null)
                 return NotFound();
 
-            PhotoFormModel model = new PhotoFormModel(pizzaModificata);
+            PhotoFormModel model = new PhotoFormModel(photoUpdate);
             model.CreateCategories();
 
             return View(model);

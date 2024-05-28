@@ -68,7 +68,8 @@ namespace net_il_mio_fotoalbum.Models
 
             photo.Title = dataPhoto.Title;
             photo.Description = dataPhoto.Description;
-            photo.ImgFile = dataPhoto.ImgFile;
+            if(photo.ImgSrc != null)
+                photo.ImgFile = dataPhoto.ImgFile;
             photo.Visible = dataPhoto.Visible;
 
             photo.Categories.Clear(); // Prima svuoto così da salvare solo le informazioni che l'utente ha scelto

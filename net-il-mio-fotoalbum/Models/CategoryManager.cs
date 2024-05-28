@@ -8,11 +8,23 @@ namespace net_il_mio_fotoalbum.Models
     public class CategoryManager
     {
         // AGGIUNTA DI UNA CATEGORIA
-        public static void InsertCategory(Category Category)
+        public static void InsertCategory(Category category, List<string> selectedPhotos)
         {
             using PhotoContext db = new PhotoContext();
+            
+            if (selectedPhotos != null)
+            {
+                category.photos = new List<Photo>();
+                foreach (var photoId in selectedPhotos)
+                {
+                    int id = int.Parse(photoId);
+                    var photo = db.Photos.FirstOrDefault(c => c.Id == id);
+                    if (photo != null)
+                        category.photos.Add(photo);
+                }
+            }
 
-            db.Categories.Add(Category);
+            db.Categories.Add(category);
             db.SaveChanges();
 
         }
@@ -40,12 +52,24 @@ namespace net_il_mio_fotoalbum.Models
         public static bool UpdateCategory(int id, Category dataCategory, List<string> photos)
         {
             using PhotoContext db = new PhotoContext();
-            var category = db.Categories.Where(c => c.Id == id).Include(p => p.photos).FirstOrDefault();
+            var categoryToEdit = db.Categories.Where(c => c.Id == id).Include(p => p.photos).FirstOrDefault();
 
-            if (category == null)
+            if (categoryToEdit == null)
                 return false;
 
-            category.Name = dataCategory.Name;
+            categoryToEdit.Name = dataCategory.Name;
+
+            categoryToEdit.photos.Clear();
+            if (photos != null)
+            {
+                foreach (var photo in photos)
+                {
+                    int idPhoto = int.Parse(photo);
+                    var photoFromDb = db.Photos.FirstOrDefault(p => p.Id == idPhoto);
+                    if (photoFromDb != null)
+                        categoryToEdit.photos.Add(photoFromDb);
+                }
+            }
 
             db.SaveChanges();
 
@@ -72,6 +96,13 @@ namespace net_il_mio_fotoalbum.Models
                 return false;
 
             }
+        }
+
+        // RECUPERARE LISTA DI TUTTE LE FOTO
+        public static List<Photo> GetAllPhotos()
+        {
+            using PhotoContext db = new PhotoContext();
+            return db.Photos.ToList();
         }
     } 
 }
