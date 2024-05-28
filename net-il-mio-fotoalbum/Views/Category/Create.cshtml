@@ -1,5 +1,49 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using net_il_mio_fotoalbum.Models
+@model CategoryFormModel
+
 @{
+    ViewData["Title"] = "Crea la tua categoria";
+}
+
+@if (User.IsInRole("SuperAdmin"))
+{
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-12 text-center">
+                <h2>Crea la <span class="my-title fw-bold">tua categoria</span> personalizzata</h2>
+            </div>
+            <div class="col-12 col-sm-11 col-lg-8">
+                <form asp-controller="Category" asp-action="Create" method="post" class="my-4 personal-bg rounded-3 p-4 text-black" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label asp-for="Category.Name" class="form-label">Nome categoria</label>
+                        <input type="text" asp-for="Category.Name" class="form-control" id="name" />
+                        <span asp-validation-for="Category.Name" class="text-danger fw-bold"></span>
+                    </div>
+                    <div class="text-center">
+                        <a asp-action="Index" class="btn btn-danger px-5 btn-crea-modifica">Annulla</a>
+                        <input type="submit" class="btn btn-warning fs-5 px-5 btn-crea-modifica" value="Crea Categoria">
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 my-5 text-center">
+                <a href="@Url.Action("Index", "Category")" class="btn btn-secondary">Torna all'elenco di tutte le categorie</a>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-secondary mt-2 mt-md-0">Ricomincia dalla Home</a>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 mt-5 text-danger fw-bold">Non sei autorizzato ad accedere a questo contenuto.</h1>
+            </div>
+            <div class="col-12 my-5 text-center">
+                <a href="@Url.Action("Index", "Category")" class="btn btn-primary">Torna all'elenco di tutte le categorie</a>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-2 mt-md-0">Ricomincia dalla Home</a>
+            </div>
+        </div>
+    </div>
 }
