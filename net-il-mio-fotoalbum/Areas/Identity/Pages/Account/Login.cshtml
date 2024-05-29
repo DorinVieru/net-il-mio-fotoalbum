@@ -2,14 +2,14 @@
 @model LoginModel
 
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = "Accedi all'account";
 }
 
 <div class="container">
     <h1 class="mb-3 my-0 my-title">@ViewData["Title"]</h1>
     <div class="row">
-        <div class="col-md-5">
-            <div class="d-flex flex-column justify-content-between text-white rounded-3 p-4 personal-bg">
+        <div class="col-md-6">
+            <div class="d-flex flex-column justify-content-between rounded-3 p-4 personal-bg">
                 <form id="account" method="post">
                     <h2>Usa un account registrato per poter accedere.</h2>
                     <hr />
@@ -19,13 +19,13 @@
                         <label asp-for="Input.Email" class="form-label"></label>
                         <span asp-validation-for="Input.Email" class="text-danger"></span>
                     </div>
-                    <div class="form-floating">
+                    <div class="form-floating my-3">
                         <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
                         <label asp-for="Input.Password" class="form-label"></label>
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
                     </div>
                     <div>
-                        <div class="checkbox">
+                        <div class="checkbox mb-3">
                             <label asp-for="Input.RememberMe" class="form-label">
                                 <input class="form-check-input" asp-for="Input.RememberMe" />
                                 @Html.DisplayNameFor(m => m.Input.RememberMe)
@@ -33,7 +33,7 @@
                         </div>
                     </div>
                     <div>
-                        <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Accedi</button>
+                        <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary mb-4">Accedi</button>
                     </div>
                     <div>
                         <p>
@@ -49,7 +49,7 @@
                 </form>
             </div>
         </div>
-        <div class="col-md-6 col-md-offset-2 ms-1 ms-md-3 mt-4 mt-md-0">
+        <div class="col-md-5 col-md-offset-2 ms-1 ms-md-3 mt-4 mt-md-0">
             <section>
                 <h3>Usa un altro servizio per effettuare l'accesso.</h3>
                 <hr />

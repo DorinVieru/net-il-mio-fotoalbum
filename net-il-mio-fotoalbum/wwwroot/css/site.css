@@ -60,15 +60,21 @@ li {
     width: 0;
 }
 
+.nav-profile::before {
+    width: 0;
+}
+
 .nav-link:hover::before,
 .nav-link:active::before {
     background-color: #ffd700;
     bottom: -4px;
 }
 
+
+
 /* MAIN */
-.my-title{
-   color: #3A008A;
+.my-title {
+    color: #3A008A;
 }
 
 .my-list-card {
