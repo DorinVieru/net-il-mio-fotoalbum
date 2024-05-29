@@ -1,4 +1,7 @@
 ﻿@using net_il_mio_fotoalbum.Models
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<IdentityUser> SignInManager
 @model Photo
 
 @{
@@ -46,7 +49,7 @@
                                 }
 
                             </p>
-                            @if (User.IsInRole("SuperAdmin"))
+                            @if (User.IsInRole("SuperAdmin") || Model.AuthorId == UserManager.GetUserId(User))
                             {
                                 @*MODIFICA*@
                                 <a href="@Url.Action("Update", "Photo", new { id = Model.Id })" class="btn btn-warning my-2"><i class="fa-solid fa-pen-to-square"></i> Modifica</a>
@@ -63,7 +66,7 @@
                 </div>
             </div>
         </div>
-        @if (User.IsInRole("SuperAdmin") || User.IsInRole("User"))
+        @if (User.IsInRole("SuperAdmin") || User.IsInRole("User") || User.IsInRole("Photographer"))
         {
             <div class="col-12 mb-5 text-center">
                 <a href="@Url.Action("Index", "Photo")" class="btn btn-primary">Torna all'elenco di tutte le foto</a>

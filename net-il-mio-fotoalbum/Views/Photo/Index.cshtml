@@ -1,5 +1,8 @@
 ﻿@using net_il_mio_fotoalbum.Models
 @using net_il_mio_fotoalbum.Code
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<IdentityUser> SignInManager
 @model List<Photo>
 
 @{
@@ -8,7 +11,7 @@
     var defaultImagePath = Url.Content("~/img/no-image.jpg");
 }
 
-@if (User.IsInRole("SuperAdmin") || User.IsInRole("User"))
+@if (User.IsInRole("SuperAdmin") || User.IsInRole("User") || User.IsInRole("Photographer"))
 {
     <div class="col-12 my-5 text-center">
         <div class="row pe-0">
@@ -18,7 +21,7 @@
                     <button class="btn btn-outline-warning ms-2 px-3" type="submit">Cerca</button>
                 </form>
             </div>
-            @if (User.IsInRole("SuperAdmin"))
+            @if (User.IsInRole("SuperAdmin") || User.IsInRole("Photographer"))
             {
                 <div class="col-12 col-md-6 text-md-end pe-0 me-0">
                     <a href="@Url.Action("Create", "Photo")" class="btn btn-primary fs-5">Crea una nuova foto</a>
@@ -87,7 +90,7 @@
                                 @*VISUALIZZAZIONE DETTAGLI*@
                                 <a href="@Url.Action("Details", "Photo", new { id = photo.Id })" class="btn btn-primary mt-auto"><i class="fa-solid fa-eye"></i> Visualizza dettagli</a>
 
-                                @if (User.IsInRole("SuperAdmin"))
+                                @if (User.IsInRole("SuperAdmin") || photo.AuthorId == UserManager.GetUserId(User))
                                 {
                                     @*MODIFICA*@
                                     <a href="@Url.Action("Update", "Photo", new { id = photo.Id })" class="btn btn-warning my-2"><i class="fa-solid fa-pen-to-square"></i> Modifica</a>
@@ -142,13 +145,16 @@
                                 </td>
                                 <td>
                                     <a href="@Url.Action("Details", "Photo", new { id = photo.Id })" class="btn btn-primary"><i class="fa-solid fa-eye"></i></a>
-                                    <a href="@Url.Action("Update", "Photo", new { id = photo.Id })" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <form id="deletePhotoForm-@photo.Id" data-form-id="@photo.Id" asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setFormId('@photo.Id', '@photo.Title')">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    @if (User.IsInRole("SuperAdmin") || photo.AuthorId == UserManager.GetUserId(User))
+                                     {
+                                        <a href="@Url.Action("Update", "Photo", new { id = photo.Id })" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <form id="deletePhotoForm-@photo.Id" data-form-id="@photo.Id" asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setFormId('@photo.Id', '@photo.Title')">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                     }
                                 </td>
                             </tr>
                         }

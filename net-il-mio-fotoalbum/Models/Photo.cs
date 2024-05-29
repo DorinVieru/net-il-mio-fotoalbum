@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using Xunit;
 using Xunit.Sdk;
 
@@ -20,6 +21,10 @@ namespace net_il_mio_fotoalbum.Models
         public string ImgSrc => ImgFile != null ? $"data:image/png;base64,{Convert.ToBase64String(ImgFile)}" : "";
         public bool Visible { get; set; } = true;
         public List<Category>? Categories { get; set; }
+
+        [Required(ErrorMessage = "Indicare l'autore del contenuto è obbligatorio.")]
+        public string AuthorId { get; set; }
+        public IdentityUser? Author { get; set; }
 
         public Photo() { }
     }

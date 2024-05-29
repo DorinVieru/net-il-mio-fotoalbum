@@ -48,7 +48,6 @@ namespace net_il_mio_fotoalbum
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
-            // Call the CreateRoles method to seed the roles and the SuperAdmin user.
             CreateRoles(app).Wait();
 
             app.Run();

@@ -5,7 +5,7 @@
     ViewData["Title"] = "Modifica la tua categoria";
 }
 
-@if (User.IsInRole("SuperAdmin"))
+@if (User.IsInRole("SuperAdmin") || User.IsInRole("Photographer"))
 {
     <div class="container my-5">
         <div class="row justify-content-center">

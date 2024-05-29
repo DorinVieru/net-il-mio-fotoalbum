@@ -37,7 +37,7 @@ namespace net_il_mio_fotoalbum.Models
                 using PhotoContext db = new PhotoContext();
 
                 if (includeReferences)
-                    return db.Photos.Where(p => p.Id == id).Include(p => p.Categories).FirstOrDefault();
+                    return db.Photos.Where(p => p.Id == id).Include(p => p.Categories).Include(p => p.Author).FirstOrDefault();
                 return db.Photos.FirstOrDefault(p => p.Id == id);
 
             }
@@ -48,13 +48,19 @@ namespace net_il_mio_fotoalbum.Models
             }
         }
 
+        // RECUPERARE LE FOTO DELL'UTENTE A CUI APPARTIENE
+        public static List<Photo> GetPhotosByUser(string userId)
+        {
+            using PhotoContext db = new PhotoContext();
+            return db.Photos.Where(p => p.AuthorId == userId).Include(p => p.Categories).Include(p => p.Author).ToList();
+        }
+
         // OTTENERE LA LISTA DI TUTTE LE FOTO
         public static List<Photo> GetAllPhotos()
         {
             using PhotoContext db = new PhotoContext();
 
-            return db.Photos.Include(p => p.Categories)
-                          .ThenInclude(pc => pc.photos).ToList();
+            return db.Photos.Include(p => p.Categories).ThenInclude(pc => pc.photos).Include(p => p.Author).ToList();
         }
 
         // OTTENERE LA LISTA DI TUTTE LE FOTO CON FILTRO
@@ -72,7 +78,7 @@ namespace net_il_mio_fotoalbum.Models
         public static List<Photo> GetAllVisiblePhotos()
         {
             using PhotoContext db = new PhotoContext();
-            return db.Photos.Where(p => p.Visible).Include(p => p.Categories).ToList();
+            return db.Photos.Where(p => p.Visible).Include(p => p.Categories).Include(p => p.Author).ToList();
         }
 
         // MODIFICARE UNA FOTO

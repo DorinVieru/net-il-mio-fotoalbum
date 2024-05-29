@@ -4,14 +4,24 @@ using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Runtime.ConstrainedExecution;
 
 namespace net_il_mio_fotoalbum.Controllers
 {
     public class PhotoController : Controller
     {
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public PhotoController(UserManager<IdentityUser> userManager)
+        {
+            _userManager = userManager;
+        }
+
         public IActionResult Index()
         {
-            var photos = PhotoManager.GetAllPhotos();
+            var userId = _userManager.GetUserId(User);
+            var photos = User.IsInRole("SuperAdmin") ? PhotoManager.GetAllPhotos() : PhotoManager.GetPhotosByUser(userId);
             return View(photos);
         }
 
@@ -28,7 +38,7 @@ namespace net_il_mio_fotoalbum.Controllers
 
         // CREAZIONE GET
         [HttpGet]
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "SuperAdmin, Photographer")]
         public IActionResult Create()
         {
             Photo p = new Photo();
@@ -50,6 +60,7 @@ namespace net_il_mio_fotoalbum.Controllers
                 return View("Create", photoInsert); // Ritorna alla view in cui è presente il form
             }
 
+            photoInsert.Photo.AuthorId = _userManager.GetUserId(User);
             photoInsert.SetImageFileFromFormFile();
             PhotoManager.InsertPhoto(photoInsert.Photo, photoInsert.SelectedCategories);
 
@@ -58,12 +69,16 @@ namespace net_il_mio_fotoalbum.Controllers
 
         // MODIFICA GET 
         [HttpGet]
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "SuperAdmin, Photographer")]
         public IActionResult Update(int id)
         {
             var photoUpdate = PhotoManager.GetPhotoById(id);
             if (photoUpdate == null)
                 return NotFound();
+
+            // Verifico che l'utente sia l'autore della foto o un SuperAdmin
+            if (!User.IsInRole("SuperAdmin") && photoUpdate.AuthorId != _userManager.GetUserId(User))
+                return Forbid();
 
             PhotoFormModel model = new PhotoFormModel(photoUpdate);
             model.CreateCategories();
@@ -82,6 +97,14 @@ namespace net_il_mio_fotoalbum.Controllers
                 return View("Update", photoUpdate); // Ritorna alla view in cui è presente il form di modifica
             }
 
+            var originalPhoto = PhotoManager.GetPhotoById(id);
+            if (originalPhoto == null)
+                return NotFound();
+
+            // Verifico che l'utente sia l'autore della foto o un SuperAdmin
+            if (!User.IsInRole("SuperAdmin") && originalPhoto.AuthorId != _userManager.GetUserId(User))
+                return Forbid();
+
             photoUpdate.SetImageFileFromFormFile();
             if (PhotoManager.UpdatePhoto(id, photoUpdate.Photo, photoUpdate.SelectedCategories))
                 return RedirectToAction("Index");
@@ -92,8 +115,17 @@ namespace net_il_mio_fotoalbum.Controllers
         // CNACELLAZIONE POST
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SuperAdmin, Photographer")]
         public IActionResult Delete(int id)
         {
+            var photoToDelete = PhotoManager.GetPhotoById(id);
+            if (photoToDelete == null)
+                return NotFound();
+
+            // Verifico che l'utente sia l'autore della foto o un SuperAdmin
+            if (!User.IsInRole("SuperAdmin") && photoToDelete.AuthorId != _userManager.GetUserId(User))
+                return Forbid();
+
             PhotoManager.DeletePhoto(id);
             return RedirectToAction("Index");
         }

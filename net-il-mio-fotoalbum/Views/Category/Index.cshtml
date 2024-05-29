@@ -6,7 +6,7 @@
     ViewData["Title"] = "Lista Categorie";
 }
 
-@if (User.IsInRole("SuperAdmin") || User.IsInRole("User"))
+@if (User.IsInRole("SuperAdmin") || User.IsInRole("User") || User.IsInRole("Photographer"))
 {
     <div class="col-12 my-5 text-center">
         <div class="row pe-0">

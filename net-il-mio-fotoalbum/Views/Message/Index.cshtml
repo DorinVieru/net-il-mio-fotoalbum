@@ -6,7 +6,7 @@
     ViewData["Title"] = "Lista Messaggi";
 }
 
-@if (User.IsInRole("SuperAdmin"))
+@if (User.IsInRole("SuperAdmin") || User.IsInRole("Photographer"))
 {
     <div class="col-12 text-center">
         <div class="row pe-0">
