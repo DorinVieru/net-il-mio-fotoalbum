@@ -84,7 +84,7 @@ namespace net_il_mio_fotoalbum.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "Il campo {0} deve essere lungo almeno {2} e al massimo {1}.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
@@ -94,8 +94,8 @@ namespace net_il_mio_fotoalbum.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Conferma password")]
+            [Compare("Password", ErrorMessage = "Le due password non corrispondono.")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -120,7 +120,7 @@ namespace net_il_mio_fotoalbum.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    _logger.LogInformation("L'utente ha creato un nuovo account con password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -131,8 +131,8 @@ namespace net_il_mio_fotoalbum.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    await _emailSender.SendEmailAsync(Input.Email, "Conferma la tua mail",
+                        $"Per favore conferma il tuo account su <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -162,9 +162,9 @@ namespace net_il_mio_fotoalbum.Areas.Identity.Pages.Account
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
-                    $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
+                throw new InvalidOperationException($"Non è possibile creare un'istanza di '{nameof(IdentityUser)}'. " +
+                    $"Assicurarsi che '{nameof(IdentityUser)}' non sia una classe astratta e che abbia un costruttore senza parametri, o in alternativa " +
+                    $"sovrascrivere la pagina della registrazione in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
 
@@ -172,7 +172,7 @@ namespace net_il_mio_fotoalbum.Areas.Identity.Pages.Account
         {
             if (!_userManager.SupportsUserEmail)
             {
-                throw new NotSupportedException("The default UI requires a user store with email support.");
+                throw new NotSupportedException("L'interfaccia utente predefinita richiede un archivio utenti con supporto e-mail.");
             }
             return (IUserEmailStore<IdentityUser>)_userStore;
         }
