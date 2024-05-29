@@ -19,6 +19,14 @@
             </div>
         </div>
     </div>
+    <div class="row justify-content-center my-3">
+        <div class="col-12 d-flex justify-content-center">
+            <button id="loadingSpinner" class="btn btn-secondary" type="button" disabled style="display: none;">
+                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span role="status">Caricamento delle foto in corso...</span>
+            </button>
+        </div>
+    </div>
     <div class="row js-no-photo d-none">
         <div class="col-12 mb-3 d-flex justify-content-center">
             <h4>Non hai inserito nessuna foto</h4>
@@ -76,6 +84,9 @@
 <script>
     // FUNZIONE PER CARICARE LA LISTA DELLE FOTO
     function loadList(nameFilter) {
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        loadingSpinner.style.display = 'block'; // Mostra lo spinner
+
         axios.get('api/PhotoWebApi/GetAllPhotos',
             {
                 params:
@@ -84,6 +95,8 @@
                 }
             }).then((res) => {
                 console.log(res.data)
+                loadingSpinner.style.display = 'none'; // Nasconde lo spinner
+
                 if (res.data.length == 0) // Non c'è nessuna foto
                 {
                     document.querySelector('.js-no-photo').classList.remove('d-none');
@@ -102,11 +115,10 @@
                         if (photo.categories && photo.categories.length > 0) {
                             categoriesHtml = '<div class="d-flex flex-wrap">';
                             photo.categories.forEach(cat => {
-                                console.log('forerach:', cat)
                                 categoriesHtml += `<div class="categories m-1 p-1 text-white">
                                                         <a href="/Category/Details/${cat.id}" class="text-white text-decoration-none">${cat.name}</a>
                                                    </div>`;
-                            });
+                                });
                             categoriesHtml += '</div>';
                         } else {
                             categoriesHtml = '<span class="fw-bold">Nessuna categoria assegnata alla foto.</span>';
@@ -130,6 +142,7 @@
                                         <p class="card-text mb-0">
                                             Categoria assegnata: ${categoriesHtml}
                                         </p>
+                                        <p class="card-text fw-bold">Autore: ${photo.author.email}</p>
                                         <a href="/Photo/Details/${photo.id}" class="btn btn-primary mt-auto"><i class="fa-solid fa-eye"></i> Visualizza dettagli</a>
                                     </div>
                                 </div>
@@ -140,6 +153,7 @@
                 }
             }).catch((error) => {
                 console.error('Error fetching photos:', error);
+                loadingSpinner.style.display = 'none'; // Nascondo lo spinner in caso di errore
             });
     }
 

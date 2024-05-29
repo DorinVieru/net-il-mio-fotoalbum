@@ -1,4 +1,8 @@
 ﻿@using net_il_mio_fotoalbum.Models
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+
 @model PhotoFormModel
 
 @{
@@ -18,6 +22,8 @@
             <div class="col-12 col-sm-11 col-lg-8">
                 <form asp-controller="Photo" asp-action="Update" asp-route-id="@Model.Photo.Id" method="post" class="my-4 personal-bg rounded-3 p-4 text-black" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
+                    <!-- Campo nascosto per l'ID dell'autore -->
+                    <input type="hidden" name="Photo.AuthorId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
                     <div class="mb-3">
                         <label for="name" class="form-label">Nome</label>
                         <input type="text" asp-for="Photo.Title" class="form-control" id="name" />
@@ -90,11 +96,11 @@ else
 }
 
 <script>
-    document.getElementById('ImageFormFile').addEventListener('change', function(event) {
+    document.getElementById('ImageFormFile').addEventListener('change', function (event) {
         var file = event.target.files[0];
         if (file) {
             var reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 document.getElementById('previewImage').src = e.target.result;
             }
             reader.readAsDataURL(file);

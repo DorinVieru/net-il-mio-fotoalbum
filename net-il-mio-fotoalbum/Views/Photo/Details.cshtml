@@ -22,6 +22,7 @@
                     <div class="col-md-8">
                         <div class="card-body">
                             <p class="card-text fs-5">Descizione: @Model.Description</p>
+                            <p class="card-text fw-bold">Autore: @Model.Author.Email</p>
                             <p class="card-text fs-6">
                                 @if (Model.Visible)
                                 {
@@ -47,7 +48,6 @@
                                 {
                                     <span class="fw-bold">Nessuna categoria assegnata alla foto.</span>
                                 }
-
                             </p>
                             @if (User.IsInRole("SuperAdmin") || Model.AuthorId == UserManager.GetUserId(User))
                             {

@@ -31,7 +31,7 @@
     </div>
 
     <div class="col-12">
-        @if (User.IsInRole("SuperAdmin"))
+        @if (User.IsInRole("SuperAdmin") || User.IsInRole("Photographer"))
         {
             <div class="btn-group" role="group" aria-label="View Switcher">
                 <input type="radio" class="btn-check" name="viewSwitcher" id="cardViewRadio" autocomplete="off" checked>
@@ -78,7 +78,7 @@
                                         <div class="d-flex flex-wrap">
                                             @foreach (var cat in photo.Categories)
                                             {
-                                                <div class="categories m-1 p-1 text-white"> @cat.Name </div>
+                                                <div class="categories m-1 p-1 text-white"> <a href="@Url.Action("Details", "Category", new { id = cat.Id })" class="text-decoration-none text-white"> @cat.Name </a> </div>
                                             }
                                         </div>
                                     }
@@ -87,6 +87,7 @@
                                         <span class="fw-bold">Nessuna categoria assegnata alla foto.</span>
                                     }
                                 </p>
+                                <p class="card-text fw-bold">Autore: @photo.Author.Email</p>
                                 @*VISUALIZZAZIONE DETTAGLI*@
                                 <a href="@Url.Action("Details", "Photo", new { id = photo.Id })" class="btn btn-primary mt-auto"><i class="fa-solid fa-eye"></i> Visualizza dettagli</a>
 
@@ -118,8 +119,9 @@
                     <thead>
                         <tr class="table-dark">
                             <th>Nome</th>
+                            <th class="d-none d-md-table-cell">Autore</th>
                             <th class="d-none d-lg-table-cell">Img</th>
-                            <th class="d-none d-md-table-cell">Descrizione</th>
+                            <th class="d-none d-lg-table-cell">Descrizione</th>
                             <th>Visibilità</th>
                             <th>Strumenti</th>
                         </tr>
@@ -131,8 +133,9 @@
 
                                 <td class="filter-text d-none">@photo.Title</td>
                                 <td>@($"{photo.Title.SafeSubstring(20)}")</td>
+                                <td class="d-none d-md-table-cell">@photo.Author.Email</td>
                                 <td class="d-none d-lg-table-cell"> <img src="@(string.IsNullOrEmpty(photo.ImgSrc) ? defaultImagePath : photo.ImgSrc)" class="img-fluid rounded-3" alt="@photo.Title" style="width: 100px;"> </td>
-                                <td class="d-none d-md-table-cell">@($"{photo.Description.SafeSubstring(20)}")</td>
+                                <td class="d-none d-lg-table-cell">@($"{photo.Description.SafeSubstring(20)}")</td>
                                 <td class="text-center text-md-start">
                                     @if (photo.Visible)
                                     {

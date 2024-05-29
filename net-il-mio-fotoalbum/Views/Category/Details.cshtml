@@ -2,7 +2,7 @@
 @model Category
 
 @{
-    ViewData["Title"] = "Dettagli Pizza";
+    ViewData["Title"] = "Dettagli Categoria";
     var defaultImagePath = Url.Content("~/img/no-image.jpg");
 }
 
@@ -22,6 +22,7 @@
                             <div class="col-md-8">
                                 <div class="card-body">
                                     <p class="card-text fs-5">Descizione: @photo.Description</p>
+                                    <p class="card-text fw-bold">Autore: @photo.Author.Email</p>
                                     <p class="card-text fs-6">
                                         @if (photo.Visible)
                                         {
@@ -47,7 +48,6 @@
                                         {
                                             <span class="fw-bold">Nessuna categoria assegnata alla foto.</span>
                                         }
-
                                     </p>
                                     @if (User.IsInRole("SuperAdmin"))
                                     {
@@ -66,6 +66,10 @@
                         </div>
                     </div>
                 }
+            }
+            else
+            {
+               <p class="text-danger fs-4 fw-bold py-5">Nessuna foto presente in questa categoria.</p>
             }
         </div>
         @if (User.IsInRole("SuperAdmin") || User.IsInRole("User"))

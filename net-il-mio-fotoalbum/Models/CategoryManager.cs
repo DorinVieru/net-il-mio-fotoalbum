@@ -44,7 +44,7 @@ namespace net_il_mio_fotoalbum.Models
                 using PhotoContext db = new PhotoContext();
 
                 if (includeReferences)
-                    return db.Categories.Where(c => c.Id == id).Include(p => p.photos).FirstOrDefault();
+                    return db.Categories.Where(c => c.Id == id).Include(p => p.photos.Where(p => p.Visible)).ThenInclude(p => p.Author).FirstOrDefault();
                 
                 return db.Categories.FirstOrDefault(c => c.Id == id);
 

@@ -53,12 +53,15 @@
                                 <td>@($"{message.Message.SafeSubstring(20)}")</td>
                                 <td>
                                     <a href="@Url.Action("Details", "Message", new { id = message.Id })" class="btn btn-primary"><i class="fa-solid fa-eye"></i></a>
-                                    <form id="deletePhotoForm-@message.Id" data-form-id="@message.Id" asp-controller="Message" asp-action="Delete" asp-route-id="@message.Id" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setFormId('@message.Id', '@message.Name')">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    @if (User.IsInRole("SuperAdmin"))
+                                    {
+                                        <form id="deletePhotoForm-@message.Id" data-form-id="@message.Id" asp-controller="Message" asp-action="Delete" asp-route-id="@message.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setFormId('@message.Id', '@message.Name')">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    }
                                 </td>
                             </tr>
                         }

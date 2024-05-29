@@ -52,13 +52,16 @@
                                 <td>@($"{category.Name.SafeSubstring(20)}")</td>
                                 <td>
                                     <a href="@Url.Action("Details", "Category", new { id = category.Id })" class="btn btn-primary"><i class="fa-solid fa-eye"></i></a>
-                                    <a href="@Url.Action("Update", "Category", new { id = category.Id })" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <form id="deletePhotoForm-@category.Id" data-form-id="@category.Id" asp-controller="Message" asp-action="Delete" asp-route-id="@category.Id" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setFormId('@category.Id', '@category.Name')">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    @if (User.IsInRole("SuperAdmin"))
+                                     {
+                                        <a href="@Url.Action("Update", "Category", new { id = category.Id })" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <form id="deletePhotoForm-@category.Id" data-form-id="@category.Id" asp-controller="Message" asp-action="Delete" asp-route-id="@category.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setFormId('@category.Id', '@category.Name')">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                     }
                                 </td>
                             </tr>
                         }

@@ -71,7 +71,7 @@ namespace net_il_mio_fotoalbum.Models
             if (name == null)
                 return db.Photos.Include(p => p.Categories).ToList();
 
-            return db.Photos.Where(p => p.Title.ToLower().Contains(name.ToLower())).Include(p => p.Categories).ToList();
+            return db.Photos.Where(p => p.Title.ToLower().Contains(name.ToLower())).Include(p => p.Categories).Include(p => p.Author).ToList();
         }
 
         // OTTENERE LA LISTA DI TUTTE LE FOTO VISIBILI
